@@ -1,2 +1,5 @@
 # for jupyter notebook
 /datainit/jupyter
+
+# for python
+*.pyc

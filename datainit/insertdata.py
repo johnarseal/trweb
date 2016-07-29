@@ -56,12 +56,12 @@ signal.signal(signal.SIGTERM, term_sig_handler)
 signal.signal(signal.SIGINT, term_sig_handler)  
 
 # fetch the record of the files that have been already inserted
-lastRecNum = cur.execute("SELECT * FROM " + path_record)
+lastRecNum = cur.execute("SELECT * FROM " + REC_TBNAME)
 rawArr = cur.fetchall()
 recArr = [row[0] for row in rawArr]
 lastRecDict = {rec:1 for rec in recArr}
 print ("Start to insert file, already insert " + str(lastRecNum) + " files")
-
+print ("Time now: " + str(time.clock()))
 # iterate through the directory to insert data from every file
 rootDir = u"C:/Users/zz/Google 云端硬盘/lixi"
 pathArr = os.listdir(rootDir)
@@ -82,22 +82,25 @@ for folder in curReady:
     curDir = os.path.join(rootDir,folder)
     docArr = os.listdir(curDir)
     for doc in docArr:
+        suffix = os.path.splitext(doc)[-1]
+        if suffix != ".csv":
+            continue
+        docCnt += 1
         curDoc = os.path.join(curDir,doc)
         if curDoc in lastRecDict:
             continue
-        curRecord.append(curDoc)
+        curRecord.append(doc)
         totalErr += insertSingleFile(curDoc,TB_NAME,cur)
         # for every 50 documents, commit a change
         if docCnt % 50 == 0:
             print ("Handled " + str(docCnt) + " file, Total error: " + str(totalErr))
             print ("Time: " + str(time.clock()))
             
-            for filePath in curRecord:
-                cur.execute("INSERT INTO " + path_record + " VALUES ('" + filePath + "')")            
+            for docName in curRecord:
+                cur.execute("INSERT INTO " + REC_TBNAME + " VALUES ('" + docName + "')")            
             
             conn.commit()
             curRecord = []
-        docCnt += 1
 
 
 
