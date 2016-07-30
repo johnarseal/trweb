@@ -5,7 +5,7 @@ from dbsettings import *
 
 # the files for manually log
 outOfRangeLog = open("outofrange.log", "a+")
-duplicateLog = open("duplicate.log", "a+")
+insertErrLog = open("inserterr.log", "a+")
 recordErrLog = open("recorderr.log", "a+")
 
 ric2FileDict = {
@@ -34,6 +34,7 @@ def insertSingleFile(filepath,tbName,cursor):
     maxVal = 1e14
     with open(filepath,"r") as csvfile:
         cnt = 0
+        insertRec = {}
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for rowArr in spamreader:
             cnt += 1
@@ -47,19 +48,29 @@ def insertSingleFile(filepath,tbName,cursor):
                     try:
                         val = round(float(rowArr[i+1]),6)
                         # filter out invalid data
+                        # nan
                         if math.isnan(val):
-                            continue
-                        sql = "INSERT INTO " + str(tbName[i+1]) + " (ric, ts, trval) VALUES (" + "'" + ric + "', '" \
-                        + time.strftime("%Y-%m-%d",time.strptime(rowArr[i],"%m/%d/%Y")) + "', '" + str(val) + "')"
+                            continues
+                        # out of range
                         if abs(val) < minVal or abs(val) > maxVal:
                             outOfRangeLog.write(sql + "\n")
                             continue
+                        # duplicate
+                        tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[i],"%m/%d/%Y"))
+                        uKey = str(i+1) + "-" + ric + "-" + tmpTS
+                        if uKey in insertRec:
+                            continue
+                        insertRec[uKey] = 1
+                        sql = "INSERT INTO " + str(tbName[i+1]) + " (ric, ts, trval) VALUES (" + "'" + ric + "', '" \
+                        + tmpTS + "', '" + str(val) + "')"
                         # execute sql
                         try:
                             cursor.execute(sql)
                         except Exception as e:
+                            print(str(e))
+                            print(sql)
                             errNum += 1
-                            duplicateLog.write(str(e) + "\n" + sql + "\n")
+                            insertErrLog.write(str(e) + "\n" + sql + "\n")
                             
                     except:
                         continue
@@ -131,7 +142,7 @@ for folder in liveFolder:
         totalErr += insertSingleFile(curDoc,TB_NAME,cur)
         # for every 50 documents, commit a change
         if docCnt % 50 == 0:
-            print ("Handled " + str(docCnt) + " file, Total duplicate: " + str(totalErr))
+            print ("Handled " + str(docCnt) + " file, Uncatched insert err: " + str(totalErr))
             print ("Time: " + str(time.clock()))
             
             for docRic in curRecord:
