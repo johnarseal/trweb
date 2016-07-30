@@ -3,7 +3,7 @@ RAW_HOST = 'localhost'
 RAW_USER = 'root'
 RAW_PASS = ''
 DB_NAME = 'trweb'
-REC_TBNAME = 'path_record'
+REC_TBNAME = 'tr_insert_record'
 TB_NAME = {
                 3:"tr_peratio_daily",
                 5:"tr_price2cf_daily",

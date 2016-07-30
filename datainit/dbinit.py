@@ -17,11 +17,13 @@ for ind in TB_NAME:
     sql = "CREATE TABLE IF NOT EXISTS " + TB_NAME[ind] + """ (
       `pk` int unsigned AUTO_INCREMENT PRIMARY KEY,
       `ric` varchar(16) NOT NULL DEFAULT '',
-      `ts` datetime NOT NULL,
-      `trval` decimal(16,6) NULL,
+      `ts` date NOT NULL,
+      `trval` decimal(20,6) NULL,
        INDEX  ind_ric(ric)  
     )ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
+    cur.execute(sql)
+    sql = "ALTER TABLE " + TB_NAME[ind] + " ADD UNIQUE `ric_ts_unique`(`ric`, `ts`)"
     cur.execute(sql)
     
 sql = "CREATE TABLE IF NOT EXISTS " + REC_TBNAME + """ (

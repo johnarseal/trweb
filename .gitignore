@@ -3,3 +3,6 @@
 
 # for python
 *.pyc
+
+# for debug log
+*.log
