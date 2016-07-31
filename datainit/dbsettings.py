@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # seetings for the database
 RAW_HOST = 'localhost'
 RAW_USER = 'root'
@@ -13,3 +15,31 @@ TB_NAME = {
                 13:"tr_weektotret_daily",
                 15:"tr_monthtotret_daily"
            }
+           
+ric2FileDict = {
+    "CON.LM":"CON1.LM",
+    "PRN.V":"PRN1.V",
+    "AUX.WA":"AUX1.WA",
+    "CON.L":"CON1.L",
+    "AUX.V":"AUX1.V",
+    "COM7.BK":"COM71.BK"
+}  
+
+file2RicDict = {
+    "CON1.LM":"CON.LM",
+    "PRN1.V":"PRN.V",
+    "AUX1.WA":"AUX.WA",
+    "CON1.L":"CON.L",
+    "AUX1.V":"AUX.V",
+    "COM71.BK":"COM7.BK"
+}
+
+rootDir = u"C:/Users/zz/Google 云端硬盘/lixi"
+liveFolder = [
+ u'LiXi',
+ u'LIXI2',
+ u'LiXi3',
+ u'LiXi4',
+ u'LiXi5',
+ u'LiXi6',
+]

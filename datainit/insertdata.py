@@ -9,24 +9,6 @@ uniqueErrLog = open("uniqueerr.log", "a+")
 recordErrLog = open("recorderr.log", "a+")
 uncaughtLog = open("uncaughterr.log", "a+")
 
-ric2FileDict = {
-    "CON.LM":"CON1.LM",
-    "PRN.V":"PRN1.V",
-    "AUX.WA":"AUX1.WA",
-    "CON.L":"CON1.L",
-    "AUX.V":"AUX1.V",
-    "COM7.BK":"COM71.BK"
-}  
-
-file2RicDict = {
-    "CON1.LM":"CON.LM",
-    "PRN1.V":"PRN.V",
-    "AUX1.WA":"AUX.WA",
-    "CON1.L":"CON.L",
-    "AUX1.V":"AUX.V",
-    "COM71.BK":"COM7.BK"
-}
-
 
 # to insert data from a single file into db
 def insertSingleFile(filepath,tbName,cursor):

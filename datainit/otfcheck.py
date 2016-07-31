@@ -34,5 +34,5 @@ for ric in dataRic:
     if ric not in recDict:
         print(ric + " in data table but not recorded")
         
-        
+print("On the fly check finish!")       
         
