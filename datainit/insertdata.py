@@ -5,25 +5,26 @@ from dbsettings import *
 
 # the files for manually log
 outOfRangeLog = open("outofrange.log", "a+")
-insertErrLog = open("inserterr.log", "a+")
+uniqueErrLog = open("uniqueerr.log", "a+")
 recordErrLog = open("recorderr.log", "a+")
+uncaughtLog = open("uncaughterr.log", "a+")
 
 ric2FileDict = {
-    "CON.LM":"CON1.L",
+    "CON.LM":"CON1.LM",
     "PRN.V":"PRN1.V",
     "AUX.WA":"AUX1.WA",
     "CON.L":"CON1.L",
     "AUX.V":"AUX1.V",
-    "COM7.BR":"COM71.BR"
+    "COM7.BK":"COM71.BK"
 }  
 
 file2RicDict = {
-    "CON1.L":"CON.LM",
+    "CON1.LM":"CON.LM",
     "PRN1.V":"PRN.V",
     "AUX1.WA":"AUX.WA",
     "CON1.L":"CON.L",
     "AUX1.V":"AUX.V",
-    "COM71.BR":"COM7.BR"
+    "COM71.BK":"COM7.BK"
 }
 
 
@@ -31,7 +32,6 @@ file2RicDict = {
 def insertSingleFile(filepath,tbName,cursor):
     errNum = 0
     minVal = 1e-6
-    maxVal = 1e14
     with open(filepath,"r") as csvfile:
         cnt = 0
         insertRec = {}
@@ -50,9 +50,9 @@ def insertSingleFile(filepath,tbName,cursor):
                         # filter out invalid data
                         # nan
                         if math.isnan(val):
-                            continues
+                            continue
                         # out of range
-                        if abs(val) < minVal or abs(val) > maxVal:
+                        if abs(val) < minVal:
                             outOfRangeLog.write(sql + "\n")
                             continue
                         # duplicate
@@ -67,10 +67,14 @@ def insertSingleFile(filepath,tbName,cursor):
                         try:
                             cursor.execute(sql)
                         except Exception as e:
-                            print(str(e))
-                            print(sql)
-                            errNum += 1
-                            insertErrLog.write(str(e) + "\n" + sql + "\n")
+                            if type(e).__name__ == "IntegrityError":
+                                uniqueErrLog.write(sql + "\n")
+                            elif type(e).__name__ == "DataError":
+                                outOfRangeLog.write(sql + "\n")
+                            else:
+                                errNum += 1
+                                uncaughtLog.write(str(e) + "\n" + sql + "\n")
+                            continue
                             
                     except:
                         continue
@@ -142,7 +146,7 @@ for folder in liveFolder:
         totalErr += insertSingleFile(curDoc,TB_NAME,cur)
         # for every 50 documents, commit a change
         if docCnt % 50 == 0:
-            print ("Handled " + str(docCnt) + " file, Uncatched insert err: " + str(totalErr))
+            print ("Handled " + str(docCnt) + " file, Uncaught insert err: " + str(totalErr))
             print ("Time: " + str(time.clock()))
             
             for docRic in curRecord:
@@ -150,8 +154,6 @@ for folder in liveFolder:
                 try:
                     cur.execute(sql)
                 except Exception as e:
-                    print (sql)
-                    print (e)
                     recordErrLog.write(str(e) + "\n" + sql + "\n")           
             
             conn.commit()
