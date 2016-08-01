@@ -1,0 +1,42 @@
+<svg width="1600" height="1200" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="1602" height="1202" id="canvas_background" fill="#fff"/>
+  <g id="canvasGrid" display="none">
+   <rect id="svg_3" width="100%" height="100%" x="0" y="0" stroke-width="0" fill="url(#gridpattern)"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect fill="#fff" stroke-width="1.5" x="436.665959" y="985.556285" width="740.001443" height="111.111307" id="svg_1" stroke="#000"/>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="519.906813" y="1034.445275" id="svg_2" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(2.015275239944458,0,0,1.8571923971176145,-513.2996401377022,-865.7643210887908) " stroke="#000">Thomson Reuters Eikon</text>
+  <rect fill="#fff" stroke-width="1.5" x="434.443732" y="472.221946" width="740.001443" height="111.111307" id="svg_6" stroke="#000"/>
+  <rect fill="#fff" stroke-width="1.5" x="427.777051" y="65.554461" width="740.001443" height="111.111307" id="svg_7" stroke="#000"/>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="575.58353" y="135.922244" id="svg_9" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(2.9532384322828977,0,0,2.988862943967648,-1075.8649226484906,-258.366288698127) " stroke="#000">Database</text>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="779.273622" y="564.78022" id="svg_10" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(3.0669937133789062,0,0,3.0715482234954834,-1715.5724853277206,-1180.7824873924255) " stroke="#000">Excel</text>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="471.829446" y1="583.333284" x2="471.829446" y2="990.000743" id="svg_11" stroke-linejoin="null" stroke-linecap="null" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="472.227198" y1="582.856592" x2="443.655796" y2="618.570844" id="svg_12" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="473.655768" y1="585.713732" x2="500.798599" y2="617.142274" id="svg_13" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="799.65253" y1="583.333284" x2="799.65253" y2="990.000743" id="svg_16" stroke-linejoin="null" stroke-linecap="null" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="797.697343" y1="582.856592" x2="769.125941" y2="618.570844" id="svg_17" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="801.478852" y1="585.713732" x2="828.621683" y2="617.142274" id="svg_18" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="628.71158" y1="583.333284" x2="628.71158" y2="990.000743" id="svg_20" stroke-linejoin="null" stroke-linecap="null" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="626.756392" y1="582.856592" x2="598.184991" y2="618.570844" id="svg_21" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="630.537901" y1="585.713732" x2="657.680733" y2="617.142274" id="svg_22" stroke-linejoin="null" stroke-linecap="null"/>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="479.999569" y="623.528852" id="svg_23" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(1,0,0,0.9128541350364685,0,54.7725377837196) " stroke="#000"/>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="498.823082" y="705.881719" id="svg_29" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(6.1281352043151855,0,0,1.5110737253335316,-2557.9779416024685,-350.86039410708304) " stroke="#000"/>
+  <text fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="393.439953" y="597.907646" id="svg_30" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" transform="matrix(0.5866062148544771,0,0,0.7126538239039134,186.03511355214096,217.23842978465223) " stroke="#000">1. Dead Matser ID</text>
+  <text transform="matrix(0.6323164967477268,0,0,0.6077253432232936,337.6318688110806,293.43349306524357) " stroke="#000" fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="636.085201" y="728.570272" id="svg_31" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">3. Annual Report</text>
+  <text stroke="#000" transform="matrix(0.6581123733940331,0,0,0.6894168479653722,212.3876241287533,231.12096315508649) " fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="535.58646" y="665.088326" id="svg_33" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">2. Live Matser ID</text>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="951.41701" y1="583.333284" x2="951.41701" y2="990.000743" id="svg_34" stroke-linejoin="null" stroke-linecap="null" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="949.461823" y1="582.856592" x2="920.890422" y2="618.570844" id="svg_35" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="953.243332" y1="585.713732" x2="980.386164" y2="617.142274" id="svg_36" stroke-linejoin="null" stroke-linecap="null"/>
+  <text style="cursor: move;" stroke="#000" transform="matrix(0.638717520973225,0,0,0.5866912467270269,369.3279192061815,313.8120497866305) " fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="832.764376" y="827.136394" id="svg_37" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">4. Daily Pricing</text>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="1123.41701" y1="583.333284" x2="1123.41701" y2="990.000743" id="svg_8" stroke-linejoin="null" stroke-linecap="null" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="1121.461823" y1="582.856592" x2="1092.890422" y2="618.570844" id="svg_14" stroke-linejoin="null" stroke-linecap="null"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="1125.243332" y1="585.713732" x2="1152.386164" y2="617.142274" id="svg_15" stroke-linejoin="null" stroke-linecap="null"/>
+  <text stroke="#000" transform="matrix(0.6637110992075534,0,0,0.6374259090040013,384.3236244087279,270.7473629882674) " fill="#000000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="1061.630781" y="995.002522" id="svg_19" font-size="26" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">5. Update(daily/annual)</text>
+ </g>
+</svg>
