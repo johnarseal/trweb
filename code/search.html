@@ -1,0 +1,198 @@
+<!DOCTYPE>
+<html >
+<head>
+    <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+	<script src="lib/pace/pace.min.js"></script>
+	<link href="lib/pace/pace.js.css" rel="stylesheet" />
+</head>
+<style>
+.sel{
+	padding-top:10px;
+}
+.sel-row{
+	margin-bottom:10px;
+}
+.label-col{
+	padding-top:10px;
+}
+.sel select{
+	max-width:150px;
+}
+</style>
+
+
+<body>
+
+<div class="container">
+            <h3 style="font-family:times;font-size:300%;">
+            <center>
+                <b>Equity Search Engine</b>
+            </h3> 
+				<span class="label label-info" style="font-size:100%;">
+				Quick search (input the RIC of entity)
+				</span>
+				<br>
+				<br>
+				<div class="row">
+					<div class="form-group form-group-lg">
+						<label class="col-sm-2 control-label" for="lg">
+							 <b>RIC</b>
+						</label>
+						<div class="col-sm-5">
+						<input class="form-control" type="text" id="lg">
+						</div>
+						<div class="col-sm-5" >
+						<input class="btn btn-default" type="submit" style="font-size:150%;" value="Submit">
+						</div>
+					</div>
+				</div>
+</div>
+<br>
+<!--<form  action = "1.php"   method = "post"  >  -->
+<div id="sel-container" class="container">
+				<div class="row">
+					<div class="label-col col-md-2" >
+						<span class="label label-info">Market Type</span>
+					</div>
+					<div class="label-col col-md-2" >
+						<span class="label label-info">Country of exchange</span>
+					</div>
+					<div class="label-col col-md-2" >
+						<span class="label label-info">Exchange</span>
+					</div>
+					<div class="label-col col-md-2" >
+						<span class="label label-info">Type of equity</span>
+					</div>
+					<div class="label-col col-md-2" >
+						<span class="label label-info">GICS Industry</span>
+					</div>
+					<div class="col-md-2" >
+						<button type="button" class="add-btn btn btn-success">Add</button>
+					</div>
+				</div>
+				<br>
+				<div class="row sel-row">
+					<div class="col-md-2" >
+						<div class="sel">
+							<select class="market_type" name="sel1" ></select>
+						</div>
+					</div>
+					<div class="col-md-2" >
+						<div class="sel">
+						<select class="country" name="sel2"></select>
+						</div>
+					</div>
+					<div class="col-md-2" >
+						<div class="sel">
+						<select class="exchange" name="sel3"></select>
+						</div>
+					</div>
+					<div class="col-md-2" >
+						<div class="sel">
+						<select class="equity" name="sel4"></select>
+						</div>
+					</div>
+					<div class="col-md-2" >
+						<div class="sel">
+						<select class="industry" name="sel5"></select>
+						</div>
+					</div>
+					<div class="col-md-2" >
+						<button type="button" class="btn btn-warning btn-sm button-remove">Cancel</button>
+					</div>
+				</div>
+</div>
+<div class="container" style="padding-top:20px; text-align:center">
+	<input id="option-submit" class="btn btn-default" type="submit" style="font-size:150%;" value="Submit">
+</div>
+<!--</form>-->
+
+<script>
+var multiLevel;
+$(".add-btn").click(function(){
+	$("#sel-container").append($(".sel-row").clone()[0]);
+});
+$(document).on('click', ".button-remove", function(){
+	$(this).parents(".sel-row")[0].remove();
+});
+
+
+
+</script> 
+<script type="text/javascript">
+$(document).ready(function(){
+	var levelDict;
+	var levelClass = ["market_type","country","exchange","equity","industry"];
+	var levelNum = levelClass.length;
+    $.ajax({
+        url: "filter.php",
+        dataType: "json", 
+        success: function (data) {
+            levelDict = data;
+            $(document).on('change', ".market_type, .country, .exchange, .equity", function(){
+				var curClass = $(this).attr("class");
+				var selVal = $(this).val();
+				var curInd = levelClass.indexOf(curClass);
+				var nextSel = $(this).parent().parent().next().find("select");
+				var options = ["All",];
+				if(selVal == "All"){
+					for(curInd+=1;curInd < levelNum; curInd++){
+						for(var ent in levelDict[levelClass[curInd]]){
+							options.push(ent);
+						}
+						nextSel.html("");
+						for(var i in options){
+							nextSel.append("<option>"+options[i]+"</option>");
+						}
+						nextSel = nextSel.parent().parent().next().find("select");
+						options = ["All",];
+					}
+				}
+				else{
+					$.merge(options,levelDict[curClass][selVal]);
+					nextSel.html("");
+					for(var i in options){
+						nextSel.append("<option>"+options[i]+"</option>");
+					}
+				}
+			});
+            for(var i = 0; i < levelNum; i++){
+            	var curClass = levelClass[i];
+            	$("."+curClass).append("<option>All</option>");
+            	for(ent in levelDict[curClass]){
+            		$("."+curClass).append("<option>"+ent+"</option>");
+            	}
+            }
+           
+        }
+        
+    });
+    $("#option-submit").click(function(){
+        
+        // generate rqData
+        var rqData = {country:[],exchange:[],equity:[],industry:[]}
+       
+        $(".country").each(function(){
+            rqData.country.push($(this).val());
+        });
+
+        $(".exchange").each(function(){
+            rqData.exchange.push($(this).val());
+
+        });
+        $(".equity").each(function(){
+            rqData.equity.push($(this).val());
+        });
+        $(".industry").each(function(){
+            rqData.industry.push($(this).val());
+        });
+        var urlParam = $.param(rqData);
+        window.location.href = "list.php?"+urlParam;
+    });
+    
+});
+</script>
+</body>
+</html>
