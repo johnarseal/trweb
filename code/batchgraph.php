@@ -11,12 +11,22 @@
 			if($k == 'pk' || $k == 'ric' || $k == 'ts' || $v == null){
 				continue;
 			}
-			if (array_key_exists($k,$colDict)){
-				$colDict[$k][$ts] = $v;
-			}
-			else{
+			if (!array_key_exists($k,$colDict)){
 				$colDict[$k] = Array();
 			}
+			$colDict[$k][$ts] = $v;
+		}
+	}
+	
+	$normCol = Array("tot_rev","sga_exp_tot","cost_rev_tot","netinc_after_tax","tot_common_share",
+				"revenue","acc_rec_trade","acc_pay","tot_invent","tot_asset_rep","tot_cur_asset",
+				"cash_shortterm_invest","accrued_exp","tot_longterm_debt","tot_debt","tot_equity",
+				"cap_lease","tot_cur_liability","cur_ratio","tot_property","cash_operating","cash_finance",
+				"cash_invest","foreign_exch","cash_divid_paid");
+	
+	foreach($normCol as $col){
+		if(!array_key_exists($col,$colDict)){
+			$colDict[$col] = NULL;
 		}
 	}
 	

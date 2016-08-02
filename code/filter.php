@@ -1,5 +1,5 @@
 <?php 
-  
+  	
   function searchNextLevel($keyArr,$condArr,&$multiKey)
   {
       $curInd = count($condArr);
@@ -14,7 +14,7 @@
       if($curInd > 0){
         $sql = substr($sql, 0, -4);
       }
-      $result=mysqli_query($sql);
+      $result=mysqli_query($con,$sql);
       if($result){
         while($row = mysqli_fetch_array($result)){
           $curVal = $row[$keyArr[$curInd]];
@@ -28,10 +28,8 @@
       }
   }
 
-
-
 	// the code starts to run here
-  require_once("dbsettings.php");
+	require_once("dbsettings.php");
   
   $keyLevel = Array("market_type","country","exchange","equity","industry");
   $levelNum = count($keyLevel);
@@ -40,17 +38,17 @@
   for($i = 0; $i < $levelNum; $i++){
     $curKey = $keyLevel[$i];
     $levelDict[$curKey] = Array();
-    $sql = "SELECT DISTINCT ".$curKey." FROM `mytable`";
-    $result = mysqli_query($sql);
+    $sql = "SELECT DISTINCT ".$curKey." FROM {$masterID_TB}";
+    $result = mysqli_query($con,$sql);
     if($result){
-      while($row = mysqli_fetch_array($result)){   
+      while($row = mysqli_fetch_assoc($result)){   
         $curVal = $row[$curKey];
         $levelDict[$curKey][$curVal] = Array();
         if($i < $levelNum-1){
-          $sql = "SELECT DISTINCT ".$keyLevel[$i+1]." FROM `mytable` WHERE ".$curKey."='".$curVal."'";
-          $subResult=mysqli_query($sql);
+          $sql = "SELECT DISTINCT ".$keyLevel[$i+1]." FROM {$masterID_TB} WHERE ".$curKey."='".$curVal."'";
+          $subResult=mysqli_query($con,$sql);
           if($subResult){
-            while($subRow = mysqli_fetch_array($subResult)){
+            while($subRow = mysqli_fetch_assoc($subResult)){
               array_push($levelDict[$curKey][$curVal],$subRow[$keyLevel[$i+1]]);
             }
           }           

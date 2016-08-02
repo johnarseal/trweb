@@ -7,3 +7,4 @@
 	}
 	mysqli_select_db($con,"trweb");
 	$RP_TABLE = "tr_report_annual";
+	$masterID_TB = "tr_master_id";

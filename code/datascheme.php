@@ -1,6 +1,9 @@
 <?php
 	//direct convert
 	function dirConvert($raw){
+		if($raw==NULL){
+			return NULL;
+		}
 		$retData = array();
 		foreach($raw as $k=>$v){
 			array_push($retData,array($k,$v * 1));
@@ -11,12 +14,19 @@
 
 
 	function calGrowth($raw,$format=0){
+		if($raw==NULL){
+			return NULL;
+		}
 		$retData = array();
 			$last = current($raw);
 			$cnt = 0;
 			foreach($raw as $k=>$v){
 				$cnt++;
 				if($cnt == 1){
+					continue;
+				}
+				if($last == 0){
+					$last = $v;
 					continue;
 				}
 				if($format == 0){
@@ -32,6 +42,9 @@
 	
 	//rela=0:/ rela=1:- format=1:return
 	function calRela($raw1,$raw2,$rela=0,$format=0){
+		if($raw1==NULL || $raw2==NULL){
+			return NULL;
+		}
 		$retData = array();
 		$nv1 = current($raw1);
 		$nv2 = current($raw2);		
@@ -53,6 +66,11 @@
 				$v1 = current($raw1);
 				$v2 = current($raw2);
 				if($rela == 0){
+					if($v2 == 0){
+						$nv1 = next($raw1);
+						$nv2 = next($raw2);
+						continue;
+					}
 					$val = $v1 / $v2;
 				}
 				else if($rela == 1){

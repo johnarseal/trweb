@@ -20,6 +20,7 @@
 .sel select{
 	max-width:150px;
 }
+
 </style>
 
 
@@ -37,20 +38,30 @@
 				<br>
 				<div class="row">
 					<div class="form-group form-group-lg">
-						<label class="col-sm-2 control-label" for="lg">
-							 <b>RIC</b>
+						<label class="col-sm-2 control-label" for="lg" style="text-align: center;padding-top: 10px;">
+							 <b style="font-size:20px">RIC</b>
 						</label>
 						<div class="col-sm-5">
-						<input class="form-control" type="text" id="lg">
+						<input class="form-control" type="text" id="ric-input">
 						</div>
 						<div class="col-sm-5" >
-						<input class="btn btn-default" type="submit" style="font-size:150%;" value="Submit">
+						<input id="ric-submit" class="btn btn-default" type="submit" style="font-size:150%;" value="Submit" />
 						</div>
 					</div>
 				</div>
 </div>
+<hr>
 <br>
-<!--<form  action = "1.php"   method = "post"  >  -->
+<div  class="container">
+	<div>
+		<span class="label label-info" style="font-size:100%;">
+			Filter Search
+		</span>
+	</div>
+	<div style="font-size:18px;padding:15px">
+		Status <input value="All" checked="true" style="margin-left:10px;" name="status" type="radio"/>All<input style="margin-left:10px;" value="Live" name="status" type="radio" />Live<input value="Delisted" style="margin-left:10px;" name="status" type="radio"/>Delisted
+	</div>
+</div>
 <div id="sel-container" class="container">
 				<div class="row">
 					<div class="label-col col-md-2" >
@@ -107,10 +118,8 @@
 <div class="container" style="padding-top:20px; text-align:center">
 	<input id="option-submit" class="btn btn-default" type="submit" style="font-size:150%;" value="Submit">
 </div>
-<!--</form>-->
 
 <script>
-var multiLevel;
 $(".add-btn").click(function(){
 	$("#sel-container").append($(".sel-row").clone()[0]);
 });
@@ -172,8 +181,11 @@ $(document).ready(function(){
     $("#option-submit").click(function(){
         
         // generate rqData
-        var rqData = {country:[],exchange:[],equity:[],industry:[]}
-       
+        var rqData = {market_type:[],country:[],exchange:[],equity:[],industry:[]};
+        $(".market_type").each(function(){
+            rqData.market_type.push($(this).val());
+        });
+		
         $(".country").each(function(){
             rqData.country.push($(this).val());
         });
@@ -188,10 +200,25 @@ $(document).ready(function(){
         $(".industry").each(function(){
             rqData.industry.push($(this).val());
         });
+		var status = "All"
+		$("input[name='status']").each(function(){
+			if($(this).prop("checked")){
+				status = $(this).val();
+				return false;
+			}
+		})
+		rqData.status = status;
         var urlParam = $.param(rqData);
-        window.location.href = "list.php?"+urlParam;
+        window.open("list.php?"+urlParam);
     });
-    
+    $("#ric-submit").click(function(){
+		if($("#ric-input").val() == ''){
+			alert("please enter ric");
+		}
+		else{
+			window.open("listric.php?ric="+$("#ric-input").val());
+		}			
+	});
 });
 </script>
 </body>

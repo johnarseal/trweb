@@ -1,18 +1,17 @@
 <html>
 <head>
+<script src="js/jquery-2.2.3.min.js"></script>
   <style type="text/css">
 table,th,tr,td
 {
 border-collapse:collapse;font-family:"Trebuchet MS";
 } 
-</style>
-<style>
 caption {font-size:30px;}
 #result td, #result th, #result tr,#result 
   {
   font-size:1em;
   border:1px solid #98bf21;
-  padding:3px 7px 2px 7px;
+  padding:1px 3px 1px 3px;
   }
 #result th 
   {
@@ -32,38 +31,71 @@ caption {font-size:30px;}
 <body>
 <center>
 <table id="result">
-<caption>Result</caption>
-<tr><th>Name</th><th>Ric</th><th>Type of Equity</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th></tr>
+<caption id="resCap">Result </caption>
+<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Type of Equity</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
 
 <?php
+	require_once("dbsettings.php");
+	$showCols = Array("name","ric","equity","country","exchange","industry","status");
+	$status = $_GET["status"];	
+	
 	$condKeys = Array("market_type","country","exchange","equity","industry");
 	$condNum = count($_GET[$condKeys[0]]);
+	$rowCnt = 0;
 	for($i = 0; $i < $condNum; $i++){
-		$sql = "SELECT * FROM mytable WHERE ";
+		$sql = "SELECT ";
+		foreach($showCols as $col){
+			$sql .= "`{$col}`,";
+		}
+		$sql = substr($sql, 0, -1);
+		$sql .= " FROM {$masterID_TB} WHERE ";
 		$hasCond = 0;
 		foreach($condKeys as $key){
 			if($_GET[$key][$i] != "All"){
-				$sql .= "{$key} = {$_GET[$key][$i]} AND ";
+				$sql .= "{$key} = '{$_GET[$key][$i]}' AND ";
 				$hasCond = 1;
 			}
 		}
 		if($hasCond){
-			$sql = substr($sql, 0, -4);
+			if($status == "All"){
+				$sql = substr($sql, 0, -4);
+			}
+			else{
+				$sql .= "status = '{$status}'";
+			}
 		}
 		else{
-			$sql = substr($sql, 0, -6);
+			if($status == "All"){
+				$sql = substr($sql, 0, -6);
+			}
+			else{
+				$sql .= "status = '{$status}'";
+			}
 		}
-		$result = mysqli_query($sql);
+		$result = mysqli_query($con,$sql);
 		if($result){
-			while($row = mysqli_fetch_array($result)){
-				echo "<tr><td>{$row['COL 1']}</td><td><a href='{$row['COL 2']}.html'>{$row['COL 2']}</a></td><td>{$row['equity']}</td><td>{$row['country']}</td><td>{$row['exchange']}</td><td>{$row['industry']}</td></tr>";
+			while($row = mysqli_fetch_assoc($result)){
+				$rowCnt++;
+				echo "<tr><td>{$rowCnt}</td>";
+				foreach($showCols as $col){
+					if($col == 'ric'){
+						echo "<td><a href='batchgraph.html?ric={$row[$col]}'>{$row[$col]}</a></td>";
+					}
+					else{
+						echo "<td>{$row[$col]}</td>";
+					}
+					
+				}
+				echo "</tr>";
 			}
 		}
 	}
 ?>
 </table>
 <a href="search.html">Back</a>
-
 </center>
+<?php
+	echo "<script>$('#resCap').append('{$rowCnt}')</script>";
+?>
 </body>
 </html>
