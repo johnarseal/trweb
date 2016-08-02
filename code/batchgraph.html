@@ -19,6 +19,9 @@
 .sel select{
 	max-width:150px;
 }
+h3{
+	margin-left:25px;
+}
 </style>
 
 
@@ -43,6 +46,7 @@ function getRicfromURL(url){
 }
 $(document).ready(function(){
 	var ric = getRicfromURL(window.location.href);
+	var colNum = 2;
 	$.get("batchgraph.php?ric="+ric,function(data){
 		var titleNum = 0;
 		var cnt = 0;
@@ -51,21 +55,22 @@ $(document).ready(function(){
 			conEle = $("<div class='container-fluid' id='con-" + titleNum + "'></div>");
 			container = conEle.appendTo("#batch-wrap");
 			for(chartName in data[title]){
-				if(cnt % 2 == 0){
+				if(cnt % colNum == 0){
 					var j = (parseInt(cnt) +1);
 					rowEle = $("<div class='row' id='r-" + cnt + "'></div>");
 					rowEle.appendTo(container).append("<div class=col-md-6 id='c-" + cnt + "'><div id='g-" + cnt + "'></div></div><div class=col-md-6 id='c-" + j + "'><div id='g-" + j + "'></div></div>");
 				}
-				drawStock('g-'+cnt,data[title][chartName])
+				drawStock('g-'+cnt,data[title][chartName],chartName);
 				cnt += 1;
 			}
 			titleNum += 1;
+			cnt += (colNum - cnt % colNum);
 		}		
 	},
 	"json"
 	);
 });
-function drawStock(id,data){
+function drawStock(id,data,titleText){
 	var series = [];
 	for(i in data){
 		var pair = data[i];
@@ -84,7 +89,10 @@ function drawStock(id,data){
 		],
 		navigator:	{
 			enabled:false
-		}
+		},
+		title : {
+                text : titleText
+        }
     });
 }
 
