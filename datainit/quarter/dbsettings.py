@@ -6,9 +6,9 @@ RAW_USER = 'root'
 RAW_PASS = ''
 DB_NAME = 'trweb'
 REC_TBNAME = 'tr_insert_record'
-TB_NAME = 'tr_report_annual'
+TB_NAME = 'tr_report_quarter'
 
-rootDir = u"C:/project/Lixi/raw/Annual"
+rootDir = u"C:/project/Lixi/raw/Quarter"
 annualFolder = range(10)
 colDict = {
     1:"tot_rev",

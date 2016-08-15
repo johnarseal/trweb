@@ -12,7 +12,7 @@ def openSH(fName,shName):
         print "no sheet in " + fName + " named " + shName
         return None
 
-print "Start to iterate through excels"
+print "Start to iterate through csvs"
 t1 = time.clock()
 # the error log
 errLog = open("err.log", "w")
@@ -39,7 +39,6 @@ for folder in annualFolder:
         with open(filePath, 'rb') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             cnt = 0
-            numCol = 0
             insertRec = {}
             totNum += 1
             for rowArr in spamreader:
@@ -52,52 +51,41 @@ for folder in annualFolder:
                         # this ric has been handled
                         break
                     ricRepDict[ric] = 1  
-                    numCol = len(rowArr)
                     continue
                 else:
                     # for one row
-                    if rowArr[2] == "":
+                    if rowArr[1] == "":
                         continue
-                    tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[2],"%m/%d/%Y"))
+                    tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[1],"%m/%d/%Y"))
                     uKey = ric + "-" + str(tmpTS)
                     if uKey in insertRec:
                         continue
                     insertRec[uKey] = 1
                     valid = 0
-                    sql = "INSERT INTO " + str(TB_NAME) + " (ric,ts"
-                    for i in range(3,numCol):
-                        sql += "," + colDict[i-2]
-                    sql += ") VALUES('" + str(ric) + "','" + str(tmpTS) + "'"
-                    for i in range(3,numCol):
+                    
+                    val = {}
+                    for i in range(2,4):
                         try:
-                            val = round(float(rowArr[i]),6)
-                            # filter out invalid data
-                            # nan
-                            if math.isnan(val):
-                                val = "NULL"
+                            val[i] = round(float(rowArr[i]),6)
+                            if math.isnan(val[i]):
+                                val[i] = "NULL"
                             # out of range
-                            elif abs(val) > maxVal:
-                                outOfRangeLog.write(sql + "\n" + str(val) + "\n")
+                            elif abs(val[i]) > maxVal:
+                                outOfRangeLog.write(sql + "\n" + str(val[i]) + "\n")
                                 valid = 0
                                 break
-                                
-                                    
-                        except Exception as e:
-                            val = "NULL"  
-                            
-                        if val == "NULL":
-                            sql += ",NULL"
-                        else:
-                            sql += ",'" + str(val) + "'"
-                            valid = 1
-
+                            else:
+                                valid = 1
+                        except:
+                            val[i] = "NULL"
+                    
                     if valid:
-                        sql += ")"
+                        sql = "UPDATE " + str(TB_NAME) + " SET netinc_after_tax=" + str(val[2]) + ", sga_exp_tot=" + str(val[3]) + " WHERE ric = '" + ric + "' AND ts = '" + tmpTS + "'"
                         try:
                             cur.execute(sql)
                             conn.commit()
                         except Exception as e:
-                            errLog.write(str(e) + "\n" + sql + "\n")
+                            errLog.write(str(e) + "\n" + str(sql) + "\n")
   
         if totNum % 1000 == 0:
             print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", ric repeat:" + str(ricRepeat)

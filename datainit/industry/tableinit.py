@@ -13,7 +13,9 @@ cur.execute("USE trweb")
 # create table for the daily table
 sql = "CREATE TABLE IF NOT EXISTS " + TB_NAME + """ ( 
     `pk` int unsigned AUTO_INCREMENT PRIMARY KEY,
-    ric varchar(32) NOT NULL DEFAULT '',
+    name varchar(128) NOT NULL DEFAULT '',
+    type_level varchar(32) NOT NULL DEFAULT '',
+    stat varchar(8) NOT NULL DEFAULT '', 
     ts date NOT NULL,
     tot_rev decimal(24,8) NULL,
     sga_exp_tot decimal(24,8) NULL,
@@ -40,12 +42,12 @@ sql = "CREATE TABLE IF NOT EXISTS " + TB_NAME + """ (
     cash_invest decimal(24,8) NULL,
     foreign_exch decimal(24,8) NULL,
     cash_divid_paid decimal(24,8) NULL,    
-    INDEX  ind_ric(ric)  
+    INDEX  ind_name(name)  
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 """
 cur.execute(sql)
 
-sql = "ALTER TABLE " + TB_NAME + " ADD UNIQUE `ric_ts_unique`(`ric`, `ts`)"
+sql = "ALTER TABLE " + TB_NAME + " ADD UNIQUE `name_ts_unique`(`name`, `ts`)"
 cur.execute(sql)
 # commit changes
 conn.commit()

@@ -5,8 +5,7 @@ RAW_HOST = 'localhost'
 RAW_USER = 'root'
 RAW_PASS = ''
 DB_NAME = 'trweb'
-REC_TBNAME = 'tr_insert_record'
-TB_NAME = 'tr_report_annual'
+TB_NAME = 'tr_industry_sum'
 
 rootDir = u"C:/project/Lixi/raw/Annual"
 annualFolder = range(10)

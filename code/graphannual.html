@@ -1,0 +1,110 @@
+<!DOCTYPE>
+<html >
+<head>
+    <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="lib/Highstock-4.2.5/js/highstock.js"></script>
+</head>
+<style>
+.sel{
+	padding-top:10px;
+}
+.sel-row{
+	margin-bottom:10px;
+}
+.label-col{
+	padding-top:10px;
+}
+.sel select{
+	max-width:150px;
+}
+h3{
+	margin-left:25px;
+}
+</style>
+
+
+<body>
+
+<div id="batch-wrap">
+
+</div>
+<script>
+function getRicfromURL(url){
+	var ind = url.indexOf("?");
+	var paraStr = url.substring(ind+1);
+	var strArr = paraStr.split("&");
+	var params = {};
+	for(i in strArr){
+		ind = strArr[i].indexOf("=");
+		var arg = strArr[i].substring(0,ind);
+		var val = strArr[i].substring(ind+1);
+		params[arg] = val;
+	}
+	return params.ric;
+}
+$(document).ready(function(){
+	var ric = getRicfromURL(window.location.href);
+	var colNum = 2;
+	$.get("graphannual.php?ric="+ric,function(data){
+		var titleNum = 0;
+		var cnt = 0;
+		for(title in data){
+			$("#batch-wrap").append("<h3>"+title+"</h3>");
+			conEle = $("<div class='container-fluid' id='con-" + titleNum + "'></div>");
+			container = conEle.appendTo("#batch-wrap");
+			for(chartName in data[title]){
+				if(cnt % colNum == 0){
+					var j = (parseInt(cnt) +1);
+					rowEle = $("<div class='row' id='r-" + cnt + "'></div>");
+					rowEle.appendTo(container).append("<div class=col-md-6 id='c-" + cnt + "'><div id='g-" + cnt + "'></div></div><div class=col-md-6 id='c-" + j + "'><div id='g-" + j + "'></div></div>");
+				}
+				drawStock('g-'+cnt,data[title][chartName],chartName);
+				cnt += 1;
+			}
+			titleNum += 1;
+			cnt += (colNum - cnt % colNum);
+		}		
+	},
+	"json"
+	);
+});
+function drawStock(id,data,titleText){
+	var series = [];
+	for(i in data){
+		var pair = data[i];
+		var year = new Date(parseInt(pair[0])).getFullYear();
+		pair[0] = Date.parse(new Date(year + "-01-01 0:0:0"));
+		series.push([parseInt(pair[0]),pair[1]]);
+	}
+    $("#" + id).highcharts('StockChart', {
+		credits: {
+				enabled:false
+		},
+        series : [
+			{
+                name : 'total',
+                data: series
+            }
+		],
+		navigator:	{
+			enabled:false
+		},
+		title : {
+                text : titleText
+        },
+		tooltip: {
+			 formatter: function() {
+				return (new Date(this.x).getFullYear()) + ": " + this.y;
+			 }
+		},
+		xAxis:{
+			tickmarkPlacement:"between"
+		}
+    });
+}
+
+</script>
+</body>
+</html>

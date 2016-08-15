@@ -47,7 +47,7 @@ function getRicfromURL(url){
 $(document).ready(function(){
 	var ric = getRicfromURL(window.location.href);
 	var colNum = 2;
-	$.get("batchgraph.php?ric="+ric,function(data){
+	$.get("graphquarter.php?ric="+ric,function(data){
 		var titleNum = 0;
 		var cnt = 0;
 		for(title in data){
@@ -92,7 +92,12 @@ function drawStock(id,data,titleText){
 		},
 		title : {
                 text : titleText
-        }
+        },
+		 tooltip: {
+			 formatter: function() {
+				return new Date(this.x) + " " + this.y.toFixed(4);
+			 }
+		}
     });
 }
 

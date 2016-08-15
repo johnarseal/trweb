@@ -39,10 +39,17 @@
 				<div class="row">
 					<div class="form-group form-group-lg">
 						<label class="col-sm-2 control-label" for="lg" style="text-align: center;padding-top: 10px;">
-							 <b style="font-size:20px">RIC</b>
-						</label>
+							<select id="search-type">
+							<option>RIC</option>
+							<option>sedol</option>
+							<option>cusip</option>
+							<option>ISIN</option>
+							<option>company ticker</option>
+							<option>company name</option>
+							</select>
+						</label>						
 						<div class="col-sm-5">
-						<input class="form-control" type="text" id="ric-input">
+						<input class="form-control" type="text" id="ric-input" />
 						</div>
 						<div class="col-sm-5" >
 						<input id="ric-submit" class="btn btn-default" type="submit" style="font-size:150%;" value="Submit" />
@@ -77,7 +84,7 @@
 						<span class="label label-info">Type of equity</span>
 					</div>
 					<div class="label-col col-md-2" >
-						<span class="label label-info">GICS Industry</span>
+						<span class="label label-info">Sector</span>
 					</div>
 					<div class="col-md-2" >
 						<button type="button" class="add-btn btn btn-success">Add</button>
@@ -107,7 +114,7 @@
 					</div>
 					<div class="col-md-2" >
 						<div class="sel">
-						<select class="industry" name="sel5"></select>
+						<select class="sector" name="sel5"></select>
 						</div>
 					</div>
 					<div class="col-md-2" >
@@ -133,14 +140,14 @@ $(document).on('click', ".button-remove", function(){
 <script type="text/javascript">
 $(document).ready(function(){
 	var levelDict;
-	var levelClass = ["market_type","country","exchange","equity","industry"];
+	var levelClass = ["market_type","country","exchange"];
 	var levelNum = levelClass.length;
     $.ajax({
         url: "filter.php",
         dataType: "json", 
         success: function (data) {
-            levelDict = data;
-            $(document).on('change', ".market_type, .country, .exchange, .equity", function(){
+            levelDict = data.levelDict;
+            $(document).on('change', ".market_type, .country", function(){
 				var curClass = $(this).attr("class");
 				var selVal = $(this).val();
 				var curInd = levelClass.indexOf(curClass);
@@ -174,7 +181,20 @@ $(document).ready(function(){
             		$("."+curClass).append("<option>"+ent+"</option>");
             	}
             }
-           
+            var filData = data.filData;
+			console.log(filData);
+			for(var key in filData){
+				var curClass = key;
+				$("."+curClass).append("<option>All</option>");
+				for(var i = 0; i < filData[key].length; i++){
+					var val = filData[key][i];
+					if(val == null){
+						continue
+					}
+					$("."+curClass).append("<option>"+val+"</option>");
+				}	
+			}
+
         }
         
     });
@@ -216,7 +236,7 @@ $(document).ready(function(){
 			alert("please enter ric");
 		}
 		else{
-			window.open("listric.php?ric="+$("#ric-input").val());
+			window.open("listric.php?ric="+$("#ric-input").val()+"&search-type="+$("#search-type").val());
 		}			
 	});
 });

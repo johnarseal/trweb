@@ -7,7 +7,7 @@ RAW_PASS = ''
 DB_NAME = 'trweb'
 TB_NAME = 'tr_master_id'
 
-filePath = 'C:/project/Lixi/ID file.xlsx'
+filePath = 'C:/project/Lixi/raw/new ID file_final.xlsx'
 
 
 col2Key = {
@@ -19,13 +19,16 @@ col2Key = {
     5:"equity",
     6:"country",
     7:"exchange",
-    8:"market_type",
-    9:"sector",
-    10:"industry",
-    11:"sub_industry",
-    12:"status",
-    13:"ulti_parent"
+    8:"sector",
+    9:"industry",
+    10:"sub_industry",
+    11:"company_ticker",
+    12:"mifid",
+    13:"shariah",
+    14:"market_cap",
+    15:"currency"
 }
+
 
 
     

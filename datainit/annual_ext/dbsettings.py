@@ -8,7 +8,7 @@ DB_NAME = 'trweb'
 REC_TBNAME = 'tr_insert_record'
 TB_NAME = 'tr_report_annual'
 
-rootDir = u"C:/project/Lixi/raw/Annual"
+rootDir = u"C:/project/Lixi/raw/Annual_ext"
 annualFolder = range(10)
 colDict = {
     1:"tot_rev",

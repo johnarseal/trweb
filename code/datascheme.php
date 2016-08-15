@@ -89,3 +89,76 @@
 		}
 		return $retData;
 	}
+
+
+	//rela=0:/ rela=1:- format=1:return
+	function calMerge($raw1,$raw2,$rela=0,$format=0){
+		if($raw1==NULL || $raw2==NULL){
+			return NULL;
+		}
+		$retData = array();
+		$nv1 = current($raw1);
+		$nv2 = current($raw2);		
+		while(1){
+			if($nv1 == false || $nv2 == false){
+				break;
+			}
+			$strK1 = key($raw1);
+			$strK2 = key($raw2);
+			$k1 = strval($strK1);
+			$k2 = strval($strK2);
+			if($k1 > $k2){
+				$nv2 = next($raw2);
+			}
+			else if($k1 < $k2){
+				$nv1 = next($raw1);
+			}
+			else{
+				$v1 = current($raw1);
+				$v2 = current($raw2);
+				if(is_array($v1)){
+					array_push($retData[$strK1],$v2);
+				}
+				else{
+					$retData[$strK1] = Array($v1,$v2);
+				}
+				$nv1 = next($raw1);
+				$nv2 = next($raw2);
+			}
+		}
+		return $retData;
+	}
+
+
+
+
+
+
+	
+	function calBatch($colDict){
+		
+		
+		
+	}
+	
+	function sumStat($batchDict){
+
+		
+	}
+	
+	function normRaw($result){
+		while($row = mysqli_fetch_assoc($result)){		
+			$ts = (string)(strtotime($row['ts']) * 1000);
+			foreach($row as $k => $v){
+				if($k == 'pk' || $k == 'ric' || $k == 'ts' || $v == null){
+					continue;
+				}
+				if (!array_key_exists($k,$colDict)){
+					$colDict[$k] = Array();
+				}
+				$colDict[$k][$ts] = $v;
+			}
+		}
+	}
+	
+	

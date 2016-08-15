@@ -9,7 +9,7 @@ border-collapse:collapse;font-family:"Trebuchet MS";
 caption {font-size:30px;}
 #result td, #result th, #result tr,#result 
   {
-  font-size:1em;
+  font-size:14px;
   border:1px solid #98bf21;
   padding:1px 3px 1px 3px;
   }
@@ -32,14 +32,14 @@ caption {font-size:30px;}
 <center>
 <table id="result">
 <caption id="resCap">Result </caption>
-<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Type of Equity</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
+<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Sedol</th><th>Cusip</th><th>ticker</th><th>Equity Type</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
 
 <?php
 	require_once("dbsettings.php");
-	$showCols = Array("name","ric","equity","country","exchange","industry","status");
+	$showCols = Array("name","ric","sedol","cusip","company_ticker","equity","country","exchange","industry","status");
 	$status = $_GET["status"];	
 	
-	$condKeys = Array("market_type","country","exchange","equity","industry");
+	$condKeys = Array("country","exchange","equity");
 	$condNum = count($_GET[$condKeys[0]]);
 	$rowCnt = 0;
 	for($i = 0; $i < $condNum; $i++){
@@ -79,7 +79,7 @@ caption {font-size:30px;}
 				echo "<tr><td>{$rowCnt}</td>";
 				foreach($showCols as $col){
 					if($col == 'ric'){
-						echo "<td><a href='batchgraph.html?ric={$row[$col]}'>{$row[$col]}</a></td>";
+						echo "<td><a href='selgraph.php?ric={$row[$col]}'>{$row[$col]}</a></td>";
 					}
 					else{
 						echo "<td>{$row[$col]}</td>";

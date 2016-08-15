@@ -9,7 +9,7 @@ border-collapse:collapse;font-family:"Trebuchet MS";
 caption {font-size:30px;}
 #result td, #result th, #result tr,#result 
   {
-  font-size:1em;
+  font-size:14px;
   border:1px solid #98bf21;
  padding:1px 3px 1px 3px;
   }
@@ -32,14 +32,16 @@ caption {font-size:30px;}
 <center>
 <table id="result">
 <caption id="resCap">Result </caption>
-<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Type of Equity</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
+<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Sedol</th><th>Cusip</th><th>ticker</th><th>Equity Type</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
 
 <?php
 	require_once("dbsettings.php");
-	$showCols = Array("name","ric","equity","country","exchange","industry","status");
+	$showCols = Array("name","ric","sedol","cusip","company_ticker","equity","country","exchange","industry","status");
+	$typ2Cols = Array("RIC"=>"ric","cusip"=>"cusip","sedol"=>"sedol","company ticker"=>"company_ticker","company name"=>"name","ISIN"=>"isin");
 	
 	$ric = $_GET["ric"];
-	$sql = "SELECT * FROM {$masterID_TB} WHERE ric LIKE '%{$ric}%'";
+	$colType = $_GET["search-type"];
+	$sql = "SELECT * FROM {$masterID_TB} WHERE {$typ2Cols[$colType]} LIKE '%{$ric}%'";
 	$result = mysqli_query($con,$sql);
 	$rowCnt = 0;
 	if($result){
@@ -48,7 +50,7 @@ caption {font-size:30px;}
 			echo "<tr><td>{$rowCnt}</td>";
 			foreach($showCols as $col){
 				if($col == 'ric'){
-					echo "<td><a href='batchgraph.html?ric={$row[$col]}'>{$row[$col]}</a></td>";
+					echo "<td><a href='selgraph.php?ric={$row[$col]}'>{$row[$col]}</a></td>";
 				}
 				else{
 					echo "<td>{$row[$col]}</td>";

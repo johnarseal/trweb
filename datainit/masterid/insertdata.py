@@ -29,7 +29,7 @@ sucNum = 0
 errNum = 0
 ricRepeat = 0
 
-curSH = openSH(filePath,"Sheet1")
+curSH = openSH(filePath,"new ID file")
 numRow = curSH.nrows
 numCol = curSH.ncols
 for i in range(1,numRow):
@@ -50,10 +50,15 @@ for i in range(1,numRow):
     
     for j in range(numCol):
         val = curSH.cell_value(i,j)
-        if val == 'NULL' or val == '':
+        if j == 12 or j == 13:
+            if val == "Yes":
+                val = 1
+            elif val == "No":
+                val = 0
+        if val == 'NULL' or val == '' or (j == 14 and val == '--'):
             sql += "NULL, "
         else:
-            sql += '"' + curSH.cell_value(i,j) + '", '
+            sql += '"' + str(val) + '", '
     sql = sql[:-2]
     sql += ")"
     try:
