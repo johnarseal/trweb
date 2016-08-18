@@ -93,10 +93,14 @@ function drawStock(id,data,titleText){
 		title : {
                 text : titleText
         },
-		 tooltip: {
+		tooltip: {
 			 formatter: function() {
-				return new Date(this.x) + " " + this.y.toFixed(4);
+				var dateO = new Date(this.x);
+				return dateO.getFullYear() + "-" + (dateO.getMonth()+1) + "-" + dateO.getDate() + ": " + this.y.toFixed(4);
 			 }
+		},
+		rangeSelector:{
+			inputEnabled:false
 		}
     });
 }

@@ -12,6 +12,7 @@ def openSH(fName,shName):
         print "no sheet in " + fName + " named " + shName
         return None
 
+    
 print "Start to iterate through excels"
 t1 = time.clock()
 # the error log
@@ -51,7 +52,7 @@ for folder in annualFolder:
                         ricRepeat += 1
                         # this ric has been handled
                         break
-                    ricRepDict[ric] = 1  
+                    ricRepDict[ric] = 1
                     numCol = len(rowArr)
                     continue
                 else:

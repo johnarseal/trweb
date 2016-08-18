@@ -31,10 +31,15 @@
 	}
 	
 	$inc_state = Array();
+	
 	$inc_state["Revenue Growth"] = calGrowth($colDict["tot_rev"],1);
+	$inc_state["Revenue Growth(by last year)"] = calGrowthLY($colDict["tot_rev"],1);
 	$inc_state["SG&A Growth"] = calGrowth($colDict["sga_exp_tot"],1);
+	$inc_state["SG&A Growth(by last year)"] = calGrowthLY($colDict["sga_exp_tot"],1);
 	$inc_state["Cost of Revenue Growth"] = calGrowth($colDict["cost_rev_tot"],1);
+	$inc_state["Cost of Revenue Growth(by last year)"] = calGrowthLY($colDict["cost_rev_tot"],1);
 	$inc_state["Net Income Growth"] = calGrowth($colDict["netinc_after_tax"],1);
+	$inc_state["Net Income Growth(by last year)"] = calGrowthLY($colDict["netinc_after_tax"],1);
 	$inc_state["Cost of Revenue/Total Revenue"] = calRela($colDict["cost_rev_tot"],$colDict["tot_rev"],0,1);
 	$inc_state["SG&A/Total Revenue"] = calRela($colDict["sga_exp_tot"],$colDict["tot_rev"],0,1);
 	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_after_tax"],$colDict["tot_rev"],0,1);
@@ -52,9 +57,14 @@
 	$bal_sh["Accrued Expenses/Total Assets"] = calRela($colDict["accrued_exp"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Accounts Receivables/Current Assets"] = calRela($colDict["acc_rec_trade"],$colDict["tot_cur_asset"],0,1);
 	$bal_sh["Total Inventory/Current Assets"] = calRela($colDict["tot_invent"],$colDict["tot_cur_asset"],0,1);
-	$bal_sh["Accounts Payable-Accounts Receivable"] = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,1);
+	
 	$acc_pay_acc_rec = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,0);
 	$bal_sh["Accounts Payable-Accounts Receivable Growth"] = calGrowth($acc_pay_acc_rec,1);
+	$bal_sh["Accounts Payable-Accounts Receivable Growth(by last year)"] = calGrowthLY($acc_pay_acc_rec,1);	
+	
+	
+	$bal_sh["Accounts Payable-Accounts Receivable"] = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,1);
+	
 	$bal_sh["Cash and Short Term Investment/Total Assets"] = calRela($colDict["cash_shortterm_invest"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Cash and Short Term Investment/Current Assets"] = calRela($colDict["cash_shortterm_invest"],$colDict["tot_cur_asset"],0,1);
 	$bal_sh["Total Long Term Debt/Total Equity"] = calRela($colDict["tot_longterm_debt"],$colDict["tot_equity"],0,1);
@@ -71,14 +81,18 @@
 
 	$cash_flow = Array();
 	$cash_flow["Cash from Operating Activities Growth"] = calGrowth($colDict["cash_operating"],1);
+	$cash_flow["Cash from Operating Activities Growth(by last year)"] = calGrowthLY($colDict["cash_operating"],1);
 	$cash_flow["Cash from Financing Activities Growth"] = calGrowth($colDict["cash_finance"],1);
+	$cash_flow["Cash from Financing Activities Growth(by last year)"] = calGrowthLY($colDict["cash_finance"],1);
 	$cash_flow["Cash from Investing Activities Growth"] = calGrowth($colDict["cash_invest"],1);
+	$cash_flow["Cash from Investing Activities Growth(by last year)"] = calGrowthLY($colDict["cash_invest"],1);
 	$cash_flow["Foreign Exchange Effects on Cash"] = dirConvert($colDict["foreign_exch"]);
 	$cash_flow["Cash Dividends Paid/Cash and Short Term Investment"] = calRela($colDict["cash_divid_paid"],$colDict["cash_shortterm_invest"],0,1);
 	$cash_flow["Cash Dividends Paid Growth"] = calGrowth($colDict["cash_divid_paid"],1);
+	$cash_flow["Cash Dividends Paid Growth(by last year)"] = calGrowthLY($colDict["cash_divid_paid"],1);
 	
 	
-	/* @TODO
+	/* @TODO industry
 	$sql = "SELECT ric,industry,sub_industry,sector,country FROM tr_master_id WHERE ric='{$ric}'";
 	$result = mysqli_query($con,$sql);
 	$row = mysqli_fetch_assoc($result);

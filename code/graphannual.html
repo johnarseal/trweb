@@ -72,12 +72,21 @@ $(document).ready(function(){
 });
 function drawStock(id,data,titleText){
 	var series = [];
-	for(i in data){
+	for(var i in data){
 		var pair = data[i];
-		var year = new Date(parseInt(pair[0])).getFullYear();
-		pair[0] = Date.parse(new Date(year + "-01-01 0:0:0"));
-		series.push([parseInt(pair[0]),pair[1]]);
+		var dateO = new Date(parseInt(pair[0]));
+		var yy = dateO.getFullYear();
+		var mm = dateO.getMonth() + 1;
+		var dd = dateO.getDate();
+		var fiscalEndStr = yy+"-"+mm+"-"+dd;
+		var tickY = yy - 1;
+		if(mm == 12){
+			tickY = yy;
+		}
+		pair[0] = Date.parse(new Date(tickY + "-01-02 0:0:0"));
+		series.push({x:parseInt(pair[0]),y:pair[1],fiscalEndStr:fiscalEndStr});
 	}
+	console.log(series);
     $("#" + id).highcharts('StockChart', {
 		credits: {
 				enabled:false
@@ -96,11 +105,15 @@ function drawStock(id,data,titleText){
         },
 		tooltip: {
 			 formatter: function() {
-				return (new Date(this.x).getFullYear()) + ": " + this.y;
+				return this.points[0].point.fiscalEndStr + ": " + this.y;
 			 }
 		},
 		xAxis:{
-			tickmarkPlacement:"between"
+			tickmarkPlacement:"between",
+			showLastLabel: true
+		},
+		rangeSelector:{
+			inputEnabled:false
 		}
     });
 }
