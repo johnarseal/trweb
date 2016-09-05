@@ -47,14 +47,10 @@ function getRicfromURL(url){
 $(document).ready(function(){
 	var ric = getRicfromURL(window.location.href);
 	var colNum = 2;
-	$.get("graphannual.php?ric="+ric,function(data){
+	$.get("graphsemi.php?ric="+ric,function(data){
 		var titleNum = 0;
 		var cnt = 0;
-		var ts2fy = data.ts2fy;
 		for(title in data){
-			if(title == "ts2fy"){
-				continue;
-			}
 			$("#batch-wrap").append("<h3>"+title+"</h3>");
 			conEle = $("<div class='container-fluid' id='con-" + titleNum + "'></div>");
 			container = conEle.appendTo("#batch-wrap");
@@ -64,8 +60,7 @@ $(document).ready(function(){
 					rowEle = $("<div class='row' id='r-" + cnt + "'></div>");
 					rowEle.appendTo(container).append("<div class=col-md-6 id='c-" + cnt + "'><div id='g-" + cnt + "'></div></div><div class=col-md-6 id='c-" + j + "'><div id='g-" + j + "'></div></div>");
 				}
-
-				drawStock('g-'+cnt,data[title][chartName],chartName,ts2fy[0]);
+				drawStock('g-'+cnt,data[title][chartName],chartName);
 				cnt += 1;
 			}
 			titleNum += 1;
@@ -75,25 +70,11 @@ $(document).ready(function(){
 	"json"
 	);
 });
-function drawStock(id,data,titleText,ts2fy){
+function drawStock(id,data,titleText){
 	var series = [];
-	for(var i in data){
+	for(i in data){
 		var pair = data[i];
-		
-		// for now, we only draw the data which has fiscal year
-		if(!(pair[0] in ts2fy) || (ts2fy[pair[0]] == null)){
-			continue;
-		}
-
-		var dateO = new Date(parseInt(pair[0]));
-		var yy = dateO.getFullYear();
-		var mm = dateO.getMonth() + 1;
-		var dd = dateO.getDate();
-		var fiscalEndStr = yy+"-"+mm+"-"+dd;
-
-		var dateStr = ts2fy[pair[0]]+",01,01";
-		fy = new Date(dateStr).getTime();
-		series.push({x:parseInt(fy),y:pair[1],fiscalEndStr:fiscalEndStr});
+		series.push([parseInt(pair[0]),pair[1]]);
 	}
 	console.log(series);
     $("#" + id).highcharts('StockChart', {
@@ -114,12 +95,9 @@ function drawStock(id,data,titleText,ts2fy){
         },
 		tooltip: {
 			 formatter: function() {
-				return this.points[0].point.fiscalEndStr + ": " + this.y;
+				var dateO = new Date(this.x);
+				return dateO.getFullYear() + "-" + (dateO.getMonth()+1) + "-" + dateO.getDate() + ": " + this.y.toFixed(4);
 			 }
-		},
-		xAxis:{
-			tickmarkPlacement:"between",
-			showLastLabel: true
 		},
 		rangeSelector:{
 			inputEnabled:false

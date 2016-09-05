@@ -8,11 +8,11 @@
 	while($row = mysqli_fetch_assoc($result)){		
 		$ts = (string)(strtotime($row['ts']) * 1000);
 		foreach($row as $k => $v){
-			if($k == 'pk' || $k == 'ric' || $k == 'ts' || $v == null){
-				continue;
-			}
 			if (!array_key_exists($k,$colDict)){
 				$colDict[$k] = Array();
+			}
+			if($k == 'pk' || $k == 'ric' || $k == 'ts' || $v == null){
+				continue;
 			}
 			$colDict[$k][$ts] = $v;
 		}
@@ -49,6 +49,16 @@
 	$inc_state["(Net Income-Operating Cash Flows)/Total Revenue"] = calRela($net_inc_oper_cash,$colDict["tot_rev"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Net Income"] = calRela($net_inc_oper_cash,$colDict["netinc_after_tax"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Common Shares"] = calRela($net_inc_oper_cash,$colDict["tot_com_share_ostd"],0,1);
+	
+	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
+	$inc_state["(PE*Net Income Before E.I)/Book Value Per Share"] = calRela($pe_netinc_before_extra,$colDict["bookval_pershare"],0,1);
+	
+	$cash_sum = calRela($colDict["cash_operating"],$colDict["cash_finance"],3,0);
+	$cash_sum = calRela($cash_sum,$colDict["cash_invest"],3,0);
+	$share_sum = calRela($colDict["tot_com_share_ostd"],$colDict["tot_pref_share_ostd"],3,0);
+	$cash_pershare = calRela($cash_sum,$share_sum,0,0);
+	$inc_state["(PE*Net Income Before E.I)/Cash Flow Per Share"] = calRela($pe_netinc_before_extra,$cash_pershare,0,1);
+
 	
 	$bal_sh = Array();
 	$bal_sh["Accounts Receivables/Total Revenue"] = calRela($colDict["acc_rec_trade"],$colDict["tot_rev"],0,1);

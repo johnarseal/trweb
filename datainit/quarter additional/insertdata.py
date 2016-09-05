@@ -17,7 +17,6 @@ t1 = time.clock()
 # the error log
 errLog = open("err.log", "w")
 outOfRangeLog = open("outofrange.log", "w")
-noMatchLog = open("nomatch.log","w")
 # the code starts to run from here   
 # connect to database
 conn = MySQLdb.connect(host=RAW_HOST,user=RAW_USER,passwd=RAW_PASS,db=DB_NAME)
@@ -30,10 +29,16 @@ ricRepDict = {}
 maxVal = 1e24
 qFolder = os.listdir(rootDir)
 
-preSql = "INSERT INTO " + str(TB_NAME) + " (ric,ts"
-for i in range(1,29):
-    preSql += "," + colDict[i]
-preSql += ") VALUES('"
+preSql = "UPDATE tr_report_quarter SET "
+
+fullColNum = len(fullColDict)
+oldColNum = fullColNum - 3
+nullSql = "INSERT INTO tr_report_quarter (ric,ts"
+for i in range(0,fullColNum):
+    nullSql += "," + fullColDict[i]
+nullSql += ") VALUES('"
+
+newNum = 0
 
 for folder in qFolder:
     curDir = os.path.join(rootDir,str(folder))
@@ -63,31 +68,29 @@ for folder in qFolder:
                     ricRepDict[ric] = 1  
                     numCol = len(rowArr)
                     continue
+                if cnt == 2:
+                    continue
                 else:
-                    uKey = str(ric) + "-" + str(rowArr[1].split(" ")[0])
+                    uKey = str(ric) + "-" + str(rowArr[3].split(" ")[0])
                     if uKey not in uKeyRec:
                         uKeyRec[uKey] = 1
                         # for one common row
-                        if rowArr[1] == "":
+                        valDict = {}
+                        if rowArr[3] == "":
                             continue
                         try:
-                            tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[1].split(" ")[0],"%m/%d/%Y"))
-                        except:
-                            print rowArr[1]
+                            tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[3].split(" ")[0],"%m/%d/%Y"))
+                        except Exception as e:
+                            print str(e)
+                            print rowArr[3]
                             print filePath
                             exit()
-                        """
-                        uKey = ric + "-" + str(tmpTS)
-                        if uKey in insertRec:
-                            continue
-                        insertRec[uKey] = 1
-                        """
-                        valid = 1
-                        empty = 1
-                        sql = preSql + str(ric) + "','" + str(tmpTS) + "'"
-                        for i in range(3,30):
+
+                        valid = 0
+                        sql = preSql
+                        for i in range(0,3):
                             try:
-                                val = round(float(rowArr[i]),6)
+                                val = round(float(rowArr[i+4]),6)
                                 # filter out invalid data
                                 # nan
                                 if math.isnan(val):
@@ -103,56 +106,33 @@ for folder in qFolder:
                                 val = "NULL"  
                                 
                             if val == "NULL":
-                                sql += ",NULL"
+                                sql += colDict[i] + "=NULL,"
                             else:
-                                sql += ",'" + str(val) + "'"
-                                empty = 0
-                                
+                                sql += colDict[i] + "=" + str(val) + ","
+                                valid = 1
+                            valDict[i] = val
+                            
                         if valid:
-                            fqDict[rowArr[2]] = {}
-                            fqDict[rowArr[2]]["sql"] = sql
-                            fqDict[rowArr[2]]["empty"] = empty
-                    
-                    # for additional values, exists or nothing
-                    valid = 1
-                    try:
-                        val = round(float(rowArr[31]),6)
-                        # filter out invalid data
-                        # nan
-                        if math.isnan(val):
-                            valid = 0
-                        # out of range
-                        elif abs(val) > maxVal:
-                            outOfRangeLog.write(sql + "\n" + str(val) + "\n")
-                            valid = 0
-                    except Exception as e:
-                        valid = 0
-                    
-                    if valid:
-                        extrafqDict[rowArr[30]] = val
-
-            for fq in fqDict:
-                # if sql is empty and don't have extra column
-                if fqDict[fq]["empty"] and fq not in extrafqDict:
-                    continue
-                if fq not in extrafqDict:
-                    addVal = "NULL"
-                else:
-                    addVal = extrafqDict[fq]
-                sql = fqDict[fq]["sql"] + "," + str(addVal) + ")"
-                    
-                try:
-                    cur.execute(sql)
-                    conn.commit()
-                except Exception as e:
-                    errLog.write(str(e) + "\n" + sql + "\n")
-  
+                            qSql = "SELECT ric FROM tr_report_quarter WHERE ric = '" + ric + "' AND ts = '" + tmpTS + "'"
+                            num = cur.execute(qSql)
+                            if num == 0:
+                                newSql = nullSql + str(ric) + "', '" + tmpTS + "'"
+                                for i in range(0,oldColNum):
+                                    newSql += ",NULL"
+                                for i in range(0,3):
+                                    newSql += "," + str(valDict[i])
+                                newSql += ")"
+                                
+                                try:
+                                    cur.execute(newSql)
+                                    conn.commit()
+                                    newNum += 1
+                                except Exception as e:
+                                    errLog.write(str(e) + "\n" + newSql + "\n")
+                            
         if totNum % 1000 == 0:
-            print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", ric repeat:" + str(ricRepeat)
-                
-                
-                
-        
+            print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", newNum:" + str(newNum)
+
         
         
         

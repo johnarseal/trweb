@@ -39,10 +39,7 @@ sql = "CREATE TABLE IF NOT EXISTS " + TB_NAME + """ (
     cash_finance decimal(24,8) NULL,
     cash_invest decimal(24,8) NULL,
     foreign_exch decimal(24,8) NULL,
-    cash_divid_paid decimal(24,8) NULL,
-    historic_pe decimal(24,8) NULL,
-    bookval_pershare decimal(24,8) NULL,
-    earning_pershare decimal(24,8) NULL,
+    cash_divid_paid decimal(24,8) NULL,    
     INDEX  ind_ric(ric)  
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 """

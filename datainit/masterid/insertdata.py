@@ -29,25 +29,27 @@ sucNum = 0
 errNum = 0
 ricRepeat = 0
 
-curSH = openSH(filePath,"new ID file")
+curSH = openSH(filePath,"Sheet1")
 numRow = curSH.nrows
 numCol = curSH.ncols
+
+preSql = "INSERT INTO " + TB_NAME + " ("
+for ind in col2Key:
+    preSql += col2Key[ind] + ","
+preSql = preSql[:-1]
+preSql += ") VALUES("
+
 for i in range(1,numRow):
     totalRow += 1
     
     ric = curSH.cell_value(i,1)
     if ric in ricRepDict:
         ricRepeat += 1
-        ricRepLog.write(ric+"\r\n")
+        ricRepLog.write(ric+"\n")
         continue
     ricRepDict[ric] = 1
     
-    sql = "INSERT INTO " + TB_NAME + " ("
-    for ind in col2Key:
-        sql += col2Key[ind] + ", "
-    sql = sql[:-2]
-    sql += ") VALUES("
-    
+    sql = preSql
     for j in range(numCol):
         val = curSH.cell_value(i,j)
         if j == 12 or j == 13:
@@ -56,10 +58,10 @@ for i in range(1,numRow):
             elif val == "No":
                 val = 0
         if val == 'NULL' or val == '' or (j == 14 and val == '--'):
-            sql += "NULL, "
+            sql += "NULL,"
         else:
-            sql += '"' + str(val) + '", '
-    sql = sql[:-2]
+            sql += '"' + str(val) + '",'
+    sql = sql[:-1]
     sql += ")"
     try:
         cur.execute(sql)

@@ -35,7 +35,10 @@ colDict = {
     22:"cash_finance",
     23:"cash_invest",
     24:"foreign_exch",
-    25:"cash_divid_paid"
+    25:"cash_divid_paid",
+    26:"historic_pe",
+    27:"bookval_pershare",
+    28:"earning_pershare"
 }    
 numCol = len(colDict)
 

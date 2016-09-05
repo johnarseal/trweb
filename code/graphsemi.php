@@ -2,27 +2,21 @@
 	require_once("dbsettings.php");
 	require_once("datascheme.php");
 	$ric = $_GET['ric'];
-	$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '".$ric."'";
+	$sql = "SELECT * FROM {$RP_TABLE_SA} WHERE ric = '".$ric."'";
 	$result = mysqli_query($con,$sql);
 	$colDict = Array();
-	
-	$ts2fyInd = 0;
-	$ts2fy = Array($ts2fyInd=>Array());
-	
 	while($row = mysqli_fetch_assoc($result)){		
 		$ts = (string)(strtotime($row['ts']) * 1000);
-		$ts2fy[$ts2fyInd][$ts] = $row['fy'];
 		foreach($row as $k => $v){
 			if (!array_key_exists($k,$colDict)){
 				$colDict[$k] = Array();
 			}
-			if($k == 'pk' || $k == 'ric' || $k == 'ts' || ($v == null) || $k == 'fy'){
+			if($k == 'pk' || $k == 'ric' || $k == 'ts' || $k == 'fy' || $v == null){
 				continue;
 			}
 			$colDict[$k][$ts] = $v;
 		}
 	}
-
 	
 	$normCol = Array("tot_rev","sga_exp_tot","cost_rev_tot","netinc_after_tax","tot_com_share_ostd",
 				"revenue","acc_rec_trade","acc_pay","tot_invent","tot_asset_rep","tot_cur_asset",
@@ -37,12 +31,15 @@
 	}
 	
 	$inc_state = Array();
+	
 	$inc_state["Revenue Growth"] = calGrowth($colDict["tot_rev"],1);
-	
-	
+	$inc_state["Revenue Growth(by last year)"] = calGrowthLY($colDict["tot_rev"],1);
 	$inc_state["SG&A Growth"] = calGrowth($colDict["sga_exp_tot"],1);
+	$inc_state["SG&A Growth(by last year)"] = calGrowthLY($colDict["sga_exp_tot"],1);
 	$inc_state["Cost of Revenue Growth"] = calGrowth($colDict["cost_rev_tot"],1);
+	$inc_state["Cost of Revenue Growth(by last year)"] = calGrowthLY($colDict["cost_rev_tot"],1);
 	$inc_state["Net Income Growth"] = calGrowth($colDict["netinc_after_tax"],1);
+	$inc_state["Net Income Growth(by last year)"] = calGrowthLY($colDict["netinc_after_tax"],1);
 	$inc_state["Cost of Revenue/Total Revenue"] = calRela($colDict["cost_rev_tot"],$colDict["tot_rev"],0,1);
 	$inc_state["SG&A/Total Revenue"] = calRela($colDict["sga_exp_tot"],$colDict["tot_rev"],0,1);
 	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_after_tax"],$colDict["tot_rev"],0,1);
@@ -53,6 +50,8 @@
 	$inc_state["(Net Income-Operating Cash Flows)/Net Income"] = calRela($net_inc_oper_cash,$colDict["netinc_after_tax"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Common Shares"] = calRela($net_inc_oper_cash,$colDict["tot_com_share_ostd"],0,1);
 	
+	
+	/* semi annual doesn't need this for now
 	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
 	$inc_state["(PE*Net Income Before E.I)/Book Value Per Share"] = calRela($pe_netinc_before_extra,$colDict["bookval_pershare"],0,1);
 	
@@ -61,6 +60,7 @@
 	$share_sum = calRela($colDict["tot_com_share_ostd"],$colDict["tot_pref_share_ostd"],3,0);
 	$cash_pershare = calRela($cash_sum,$share_sum,0,0);
 	$inc_state["(PE*Net Income Before E.I)/Cash Flow Per Share"] = calRela($pe_netinc_before_extra,$cash_pershare,0,1);
+	*/
 	
 	$bal_sh = Array();
 	$bal_sh["Accounts Receivables/Total Revenue"] = calRela($colDict["acc_rec_trade"],$colDict["tot_rev"],0,1);
@@ -69,13 +69,18 @@
 	$bal_sh["Accrued Expenses/Total Assets"] = calRela($colDict["accrued_exp"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Accounts Receivables/Current Assets"] = calRela($colDict["acc_rec_trade"],$colDict["tot_cur_asset"],0,1);
 	$bal_sh["Total Inventory/Current Assets"] = calRela($colDict["tot_invent"],$colDict["tot_cur_asset"],0,1);
-	$bal_sh["Accounts Payable-Accounts Receivable"] = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,1);
+	
 	$acc_pay_acc_rec = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,0);
 	$bal_sh["Accounts Payable-Accounts Receivable Growth"] = calGrowth($acc_pay_acc_rec,1);
+	$bal_sh["Accounts Payable-Accounts Receivable Growth(by last year)"] = calGrowthLY($acc_pay_acc_rec,1);	
+	
+	
+	$bal_sh["Accounts Payable-Accounts Receivable"] = calRela($colDict["acc_pay"],$colDict["acc_rec_trade"],1,1);
+	
 	$bal_sh["Cash and Short Term Investment/Total Assets"] = calRela($colDict["cash_shortterm_invest"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Cash and Short Term Investment/Current Assets"] = calRela($colDict["cash_shortterm_invest"],$colDict["tot_cur_asset"],0,1);
-	$bal_sh["Total Long Term Debt/Total Assets"] = calRela($colDict["tot_longterm_debt"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Total Long Term Debt/Total Equity"] = calRela($colDict["tot_longterm_debt"],$colDict["tot_equity"],0,1);
+	$bal_sh["Total Long Term Debt/Total Assets"] = calRela($colDict["tot_longterm_debt"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Total Debt/Total Assets"] = calRela($colDict["tot_debt"],$colDict["tot_asset_rep"],0,1);
 	$bal_sh["Total Debt/Total Total Equity"] = calRela($colDict["tot_debt"],$colDict["tot_equity"],0,1);
 	$bal_sh["Current Portion of Long Term Debt/Total Debt"] = calRela($colDict["cap_lease"],$colDict["tot_debt"],0,1);
@@ -88,13 +93,39 @@
 
 	$cash_flow = Array();
 	$cash_flow["Cash from Operating Activities Growth"] = calGrowth($colDict["cash_operating"],1);
+	$cash_flow["Cash from Operating Activities Growth(by last year)"] = calGrowthLY($colDict["cash_operating"],1);
 	$cash_flow["Cash from Financing Activities Growth"] = calGrowth($colDict["cash_finance"],1);
+	$cash_flow["Cash from Financing Activities Growth(by last year)"] = calGrowthLY($colDict["cash_finance"],1);
 	$cash_flow["Cash from Investing Activities Growth"] = calGrowth($colDict["cash_invest"],1);
+	$cash_flow["Cash from Investing Activities Growth(by last year)"] = calGrowthLY($colDict["cash_invest"],1);
 	$cash_flow["Foreign Exchange Effects on Cash"] = dirConvert($colDict["foreign_exch"]);
 	$cash_flow["Cash Dividends Paid/Cash and Short Term Investment"] = calRela($colDict["cash_divid_paid"],$colDict["cash_shortterm_invest"],0,1);
 	$cash_flow["Cash Dividends Paid Growth"] = calGrowth($colDict["cash_divid_paid"],1);
+	$cash_flow["Cash Dividends Paid Growth(by last year)"] = calGrowthLY($colDict["cash_divid_paid"],1);
 	
 	
-	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow,"ts2fy"=>$ts2fy);
+	/* @TODO industry
+	$sql = "SELECT ric,industry,sub_industry,sector,country FROM tr_master_id WHERE ric='{$ric}'";
+	$result = mysqli_query($con,$sql);
+	$row = mysqli_fetch_assoc($result);
+	
+	$sub_industry = $row["sub_industry"];
+	$sql = "SELECT * FROM tr_industry_sum WHERE type_level = 'sub_industry' AND name = '{$sub_industry}'";
+	$result = mysqli_query($con,$sql);
+	if($result->num_rows == 0){
+		$sql = "SELECT ric FROM tr_master_id WHERE sub_industry = '{$sub_industry}'";
+		$result = mysqli_query($con,$sql);
+		$ricArr = Array();
+		while($row = mysqli_fetch_assoc($result)){
+			array_push($ricArr,$row["ric"]);
+		}
+		foreach($ricArr as $ric){
+			$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '{$ric}'
+		}
+	}	
+	*/
+	
+	
+	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow);
 	echo json_encode($retData);
 	

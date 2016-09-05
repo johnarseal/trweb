@@ -7,7 +7,7 @@ RAW_PASS = ''
 DB_NAME = 'trweb'
 TB_NAME = 'tr_master_id'
 
-filePath = 'C:/project/Lixi/raw/new ID file_final.xlsx'
+filePath = 'C:/project/Lixi/raw/ID-File(truncated).xlsx'
 
 
 col2Key = {
@@ -26,7 +26,8 @@ col2Key = {
     12:"mifid",
     13:"shariah",
     14:"market_cap",
-    15:"currency"
+    15:"currency",
+    16:"headquarter"
 }
 
 

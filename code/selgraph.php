@@ -67,6 +67,9 @@ table.gridtable td {
 		<a target="_blank" class="btn btn-primary btn-lg" href="graphannual.html?ric=<?php echo $_GET["ric"]?>" role="button">Annual Report</a>
 		<br>
 		<br>
+		<a target="_blank" class="btn btn-info btn-lg" href="graphsemi.html?ric=<?php echo $_GET["ric"]?>" role="button">Semi Annual Report</a>
+		<br>
+		<br>
 		<a target="_blank" class="btn btn-success btn-lg" href="graphquarter.html?ric=<?php echo $_GET["ric"]?>" role="button">Quarter Report</a>
 		<br>
 		<br>

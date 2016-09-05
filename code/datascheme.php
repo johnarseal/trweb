@@ -40,53 +40,6 @@
 		return $retData;
 	}
 	
-	// calculate growth from the last year same season (used by quarters)
-	// LY:last year
-	/*
-	function calGrowthLY($raw,$format=0){
-		if($raw==NULL){
-			return NULL;
-		}
-		$newRaw = array();
-		$retData = array();
-		foreach($raw as $k=>$v){
-			$ts = (int)substr($k,0,-3);
-			$strDate = date("Y-m-d",$ts);
-			$newRaw[$strDate] = $v;
-		}
-		foreach($newRaw as $k=>$v){
-			if($v == 0){
-				continue;
-			}
-			$tmpArr = $newRaw;
-			$curY = (int)substr($k,0,4);
-			$curM = (int)substr($k,5,2);
-			$nextY = (int)substr(key($tmpArr),0,4);
-			$nextM = (int)substr(key($tmpArr),5,2);
-			$newV = NULL;
-			while($nextY <= $curY + 1){
-				if(($nextY == $curY + 1 && abs($nextM-$curM) <= 1) || ($nextY == $curY && $nextM == 12 && $curM == 1) || ($nextY == $curY + 2 && $nextM == 1 && $curM == 12)){
-					$newK = (string)(strtotime(key($tmpArr)) * 1000);
-					$newV = (current($tmpArr) - $v) / $v;
-					break;
-				}
-				if(next($tmpArr) == false){
-					break;
-				}
-				$nextY = (int)substr(key($tmpArr),0,4);
-				$nextM = (int)substr(key($tmpArr),5,2);
-			}
-			if($newV != NULL){
-				if($format == 0){
-					$retData[$newK] = $newV;
-				}
-				else if($format == 1){
-					array_push($retData,array($newK,$newV));
-				}					
-			}
-		}
-		return $retData;
-	}*/
 	
 	function calGrowthLY($raw,$format=0){
 		$variance = 20*24*3600;
@@ -131,7 +84,7 @@
 		return $retData;
 	}
 	
-	//rela=0:/ rela=1:- format=1:return
+	//rela=0:'/' rela=1:'-' rela=2:'*' rela=3:'+' format=1:return
 	function calRela($raw1,$raw2,$rela=0,$format=0){
 		if($raw1==NULL || $raw2==NULL){
 			return NULL;
@@ -143,6 +96,7 @@
 			if($nv1 == false || $nv2 == false){
 				break;
 			}
+			
 			$strK1 = key($raw1);
 			$strK2 = key($raw2);
 			$k1 = strval($strK1);
@@ -166,6 +120,12 @@
 				}
 				else if($rela == 1){
 					$val = $v1 - $v2;
+				}
+				else if($rela == 2){
+					$val = $v1 * $v2;
+				}
+				else if($rela == 3){
+					$val = $v1 + $v2;
 				}
 				
 				if($format == 0){

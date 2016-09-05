@@ -32,11 +32,11 @@ caption {font-size:30px;}
 <center>
 <table id="result">
 <caption id="resCap">Result </caption>
-<tr><th>NO.</th><th>Name</th><th>Ric</th><th>Sedol</th><th>Cusip</th><th>ticker</th><th>Equity Type</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
+<tr><th>NO.</th><th>Name</th><th>Head Quarter</th><th>Ric</th><th>Sedol</th><th>Cusip</th><th>ticker</th><th>Equity Type</th><th>Country of exchange</th><th>Exchange</th><th>GICS Industry</th><th>Status</th></tr>
 
 <?php
 	require_once("dbsettings.php");
-	$showCols = Array("name","ric","sedol","cusip","company_ticker","equity","country","exchange","industry","status");
+	$showCols = Array("name","headquarter","ric","sedol","cusip","company_ticker","equity","country","exchange","industry","status");
 	$status = $_GET["status"];	
 	
 	$condKeys = Array("country","exchange","equity");
