@@ -38,16 +38,16 @@
 	$inc_state["SG&A Growth(by last year)"] = calGrowthLY($colDict["sga_exp_tot"],1);
 	$inc_state["Cost of Revenue Growth"] = calGrowth($colDict["cost_rev_tot"],1);
 	$inc_state["Cost of Revenue Growth(by last year)"] = calGrowthLY($colDict["cost_rev_tot"],1);
-	$inc_state["Net Income Growth"] = calGrowth($colDict["netinc_after_tax"],1);
-	$inc_state["Net Income Growth(by last year)"] = calGrowthLY($colDict["netinc_after_tax"],1);
+	$inc_state["Net Income Growth"] = calGrowth($colDict["netinc_inextra_bedist"],1);
+	$inc_state["Net Income Growth(by last year)"] = calGrowthLY($colDict["netinc_inextra_bedist"],1);
 	$inc_state["Cost of Revenue/Total Revenue"] = calRela($colDict["cost_rev_tot"],$colDict["tot_rev"],0,1);
 	$inc_state["SG&A/Total Revenue"] = calRela($colDict["sga_exp_tot"],$colDict["tot_rev"],0,1);
-	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_after_tax"],$colDict["tot_rev"],0,1);
-	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_after_tax"],$colDict["tot_rev"],0,1);
-	$net_inc_oper_cash = calRela($colDict["netinc_after_tax"],$colDict["cash_operating"],1,0);
+	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_inextra_bedist"],$colDict["tot_rev"],0,1);
+	$inc_state["Net Income/Total Revenue"] = calRela($colDict["netinc_inextra_bedist"],$colDict["tot_rev"],0,1);
+	$net_inc_oper_cash = calRela($colDict["netinc_inextra_bedist"],$colDict["cash_operating"],1,0);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Assets"] = calRela($net_inc_oper_cash,$colDict["tot_asset_rep"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Revenue"] = calRela($net_inc_oper_cash,$colDict["tot_rev"],0,1);
-	$inc_state["(Net Income-Operating Cash Flows)/Net Income"] = calRela($net_inc_oper_cash,$colDict["netinc_after_tax"],0,1);
+	$inc_state["(Net Income-Operating Cash Flows)/Net Income"] = calRela($net_inc_oper_cash,$colDict["netinc_inextra_bedist"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Common Shares"] = calRela($net_inc_oper_cash,$colDict["tot_com_share_ostd"],0,1);
 	
 	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
