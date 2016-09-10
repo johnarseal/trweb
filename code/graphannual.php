@@ -2,7 +2,7 @@
 	require_once("dbsettings.php");
 	require_once("datascheme.php");
 	$ric = $_GET['ric'];
-	$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '{$ric}'";
+	$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '{$ric}' ORDER BY ts";
 	$result = mysqli_query($con,$sql);
 	$colDict = Array();
 	
