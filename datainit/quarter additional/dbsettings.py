@@ -1,4 +1,5 @@
 # coding=utf-8
+import math
 
 # seetings for the database
 RAW_HOST = 'localhost'
@@ -47,6 +48,21 @@ fullColDict = (
     "netinc_inextra_bedist"
 ) 
 
-
+def cell2val(cellVal,outOfRangeLog):
+    maxVal = 1e24
+    try:
+        val = round(float(cellVal),6)
+        # filter out invalid data
+        # nan
+        if math.isnan(val):
+            val = "NULL"
+            # out of range
+        elif abs(val) > maxVal:
+            outOfRangeLog.write("outofrange err\n" + str(val) + "\n")
+            val = "NULL"
+    except Exception as e:
+        val = "NULL"
+    
+    return val
 
     

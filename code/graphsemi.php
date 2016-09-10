@@ -50,18 +50,6 @@
 	$inc_state["(Net Income-Operating Cash Flows)/Net Income"] = calRela($net_inc_oper_cash,$colDict["netinc_after_tax"],0,1);
 	$inc_state["(Net Income-Operating Cash Flows)/Total Common Shares"] = calRela($net_inc_oper_cash,$colDict["tot_com_share_ostd"],0,1);
 	
-	
-	/* semi annual doesn't need this for now
-	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
-	$inc_state["(PE*Net Income Before E.I)/Book Value Per Share"] = calRela($pe_netinc_before_extra,$colDict["bookval_pershare"],0,1);
-	
-	$cash_sum = calRela($colDict["cash_operating"],$colDict["cash_finance"],3,0);
-	$cash_sum = calRela($cash_sum,$colDict["cash_invest"],3,0);
-	$share_sum = calRela($colDict["tot_com_share_ostd"],$colDict["tot_pref_share_ostd"],3,0);
-	$cash_pershare = calRela($cash_sum,$share_sum,0,0);
-	$inc_state["(PE*Net Income Before E.I)/Cash Flow Per Share"] = calRela($pe_netinc_before_extra,$cash_pershare,0,1);
-	*/
-	
 	$bal_sh = Array();
 	$bal_sh["Accounts Receivables/Total Revenue"] = calRela($colDict["acc_rec_trade"],$colDict["tot_rev"],0,1);
 	$bal_sh["Total Inventory/Total Revenue"] = calRela($colDict["tot_invent"],$colDict["tot_rev"],0,1);
@@ -104,28 +92,19 @@
 	$cash_flow["Cash Dividends Paid Growth(by last year)"] = calGrowthLY($colDict["cash_divid_paid"],1);
 	
 	
-	/* @TODO industry
-	$sql = "SELECT ric,industry,sub_industry,sector,country FROM tr_master_id WHERE ric='{$ric}'";
-	$result = mysqli_query($con,$sql);
-	$row = mysqli_fetch_assoc($result);
+	$price_related = Array();
+	$cash_sum = calRela($colDict["cash_operating"],$colDict["cash_finance"],3,0);
+	$cash_sum = calRela($cash_sum,$colDict["cash_invest"],3,0);
+	//total share
+	$share_sum = calRela($colDict["tot_com_share_ostd"],$colDict["tot_pref_share_ostd"],3,0);
 	
-	$sub_industry = $row["sub_industry"];
-	$sql = "SELECT * FROM tr_industry_sum WHERE type_level = 'sub_industry' AND name = '{$sub_industry}'";
-	$result = mysqli_query($con,$sql);
-	if($result->num_rows == 0){
-		$sql = "SELECT ric FROM tr_master_id WHERE sub_industry = '{$sub_industry}'";
-		$result = mysqli_query($con,$sql);
-		$ricArr = Array();
-		while($row = mysqli_fetch_assoc($result)){
-			array_push($ricArr,$row["ric"]);
-		}
-		foreach($ricArr as $ric){
-			$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '{$ric}'
-		}
-	}	
-	*/
+	$price_related["Historic PE"] = dirConvert($colDict["historic_pe"]);
+	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
+	$pe_netinc_before_extra_pershare = calRela($pe_netinc_before_extra,$share_sum,0,0);
+	$price_related["(PE*Net Income Before E.I)/Book Value Per Share"] = calRela($pe_netinc_before_extra_pershare,$colDict["bookval_pershare"],0,1);
+	$price_related["(PE*Net Income Before E.I)/Cash Flow Per Share"] = calRela($pe_netinc_before_extra,$cash_sum,0,1);
 	
 	
-	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow);
+	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow,"Price Related"=>$price_related);
 	echo json_encode($retData);
 	

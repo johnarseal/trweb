@@ -12,7 +12,8 @@
 	}
 
 
-	//format=1:return 0:still needed to be used
+	//format=1:return to html; 0:still needed to be used
+	//caculate the growth of a metric
 	function calGrowth($raw,$format=0){
 		if($raw==NULL){
 			return NULL;
@@ -30,17 +31,17 @@
 					continue;
 				}
 				if($format == 0){
-					$retData[$k] = ($v - $last) / $last;
+					$retData[$k] = ($v - $last) / abs($last);					//we are dividing by abs value
 				}
 				else if($format == 1){
-					array_push($retData,array($k,($v - $last) / $last));
-				}
+					array_push($retData,array($k,($v - $last) / abs($last)));	//we are dividing by abs value
+				}	
 				$last = $v;
 			}
 		return $retData;
 	}
 	
-	
+	//caculate the growth of a metric by last year, used for quarter graph
 	function calGrowthLY($raw,$format=0){
 		$variance = 20*24*3600;
 		$yearGap = 365*24*3600;
@@ -64,10 +65,11 @@
 			while($nextTS - $curTS < $yearGap + $variance){
 				if(abs($nextTS - $curTS - $yearGap) < $variance){
 					$newK = (string)($nextTS * 1000);
-					$newV = (current($tmpArr) - $v) / $v;
+					$newV = (current($tmpArr) - $v) / abs($v);			//we are dividing by abs value
 					break;
 				}
-				if(next($tmpArr) == false){
+				if(next($tmpArr) === false){
+					//end of the array
 					break;
 				}
 				$nextTS = key($tmpArr);
@@ -84,16 +86,18 @@
 		return $retData;
 	}
 	
+	// the relationship between two metric
 	//rela=0:'/' rela=1:'-' rela=2:'*' rela=3:'+' format=1:return
-	function calRela($raw1,$raw2,$rela=0,$format=0){
-		if($raw1==NULL || $raw2==NULL){
+	function calRela($raw1,$raw2,$rela=0,$format=0,$debug=0){
+		if($raw1 === NULL || $raw2 === NULL){
 			return NULL;
 		}
 		$retData = array();
 		$nv1 = current($raw1);
-		$nv2 = current($raw2);		
+		$nv2 = current($raw2);
 		while(1){
-			if($nv1 == false || $nv2 == false){
+			//end of the array
+			if($nv1 === false || $nv2 === false){
 				break;
 			}
 			
@@ -144,14 +148,15 @@
 
 	//rela=0:/ rela=1:- format=1:return
 	function calMerge($raw1,$raw2,$rela=0,$format=0){
-		if($raw1==NULL || $raw2==NULL){
+		if($raw1===NULL || $raw2===NULL){
 			return NULL;
 		}
 		$retData = array();
 		$nv1 = current($raw1);
 		$nv2 = current($raw2);		
 		while(1){
-			if($nv1 == false || $nv2 == false){
+			//end of the array
+			if($nv1 === false || $nv2 === false){
 				break;
 			}
 			$strK1 = key($raw1);

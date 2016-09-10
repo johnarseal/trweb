@@ -1,0 +1,55 @@
+checked:
+1.LNG (NO PE)
+2.AAPL.O
+3.GOOG.O
+4.MSFT.O
+5.XOM
+6.AMZN.O
+7.FB.O
+8.CHL (only semi no quarter)
+9.NESN.S (only semi no quarter)
+10. 1398.HK (No total revenue in ft)
+11. 0700.HK			China
+12. 005930.KS		Korea	
+13.	NVS				Switzerland
+14.	RDSb.L			Netherlands
+15.	ABI.BR/BUD (ONLY SEMI NO QUARTER, BUT QUARTER ON FT!)		BELGIUM
+16. KO				AMERICA
+17.	7203.T			JAPAN
+18.	MDT 			Ireland
+19.	BATS.L			UK
+20.	ABEV3S.SA		Brazil
+21.	TOTF.PA			France	(NO SGA in db and FT)
+22.	SASY.PA			France	(BOTH SEMI AND QUARTER)
+23.	CBA.AX			Australia	(lots of metrics missing in ft)
+24.	SIEGn.DE		Germany
+25.	LVMH.PA			France
+
+
+
+------------------------------------
+26.	ACE.MI			Italy
+27.	VYSA.NS			India	(No quarter in ft)
+28.	QLIK.O			America
+29.	AL				America (No cost of revenue in ft)
+30.	GHC				America
+
+Current problem:
+1.annual data, if there is two fiscal year in a fiscal year
+2.PE data accuracy
+3.formula accuracy
+4.which net income?
+
+Current Data missing found:
+1.Facebook quarter 10, annual 07
+2.continental coal(south Africa, besides, FXR.AX,PCP.AX), no fiscal year. But no data on ft and google
+3.totally 562 companies no fiscal year
+4.ABI.BR/BUD's quarter
+
+
+missing:
+KER.IC^F03
+
+
+
+

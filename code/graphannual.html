@@ -1,5 +1,5 @@
 <!DOCTYPE>
-<html >
+<html>
 <head>
     <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="js/jquery-2.2.3.min.js"></script>
@@ -30,7 +30,8 @@ h3{
 <div id="batch-wrap">
 
 </div>
-<script>
+<script> 
+
 function getRicfromURL(url){
 	var ind = url.indexOf("?");
 	var paraStr = url.substring(ind+1);
@@ -44,6 +45,8 @@ function getRicfromURL(url){
 	}
 	return params.ric;
 }
+
+
 $(document).ready(function(){
 	var ric = getRicfromURL(window.location.href);
 	var colNum = 2;
@@ -95,7 +98,6 @@ function drawStock(id,data,titleText,ts2fy){
 		fy = new Date(dateStr).getTime();
 		series.push({x:parseInt(fy),y:pair[1],fiscalEndStr:fiscalEndStr});
 	}
-	console.log(series);
     $("#" + id).highcharts('StockChart', {
 		credits: {
 				enabled:false
@@ -126,7 +128,6 @@ function drawStock(id,data,titleText,ts2fy){
 		}
     });
 }
-
 </script>
 </body>
 </html>

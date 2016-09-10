@@ -32,6 +32,9 @@ qFolder = os.listdir(rootDir)
 
 preSql = "INSERT INTO " + str(TB_NAME) + " (ric,ts"
 for i in range(1,29):
+    # no net income after tax
+    if i == 4:
+        continue
     preSql += "," + colDict[i]
 preSql += ") VALUES('"
 
@@ -45,108 +48,95 @@ for folder in qFolder:
         filePath = os.path.join(curDir,doc)
         with open(filePath, 'rb') as csvfile:
             uKeyRec = {}
-            fqDict = {}
-            extrafqDict = {}
+            fq2ts = {}
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             cnt = 0
-            numCol = 0
             totNum += 1
+            sqlDict = {}
+            tsDict = {}
+            # first build fq2ts
             for rowArr in spamreader:
                 cnt += 1
                 # the first row
                 if cnt == 1:
-                    ric = rowArr[0]
-                    if ric in ricRepDict:
-                        ricRepeat += 1
-                        # this ric has been handled
-                        break
-                    ricRepDict[ric] = 1  
-                    numCol = len(rowArr)
                     continue
-                else:
-                    uKey = str(ric) + "-" + str(rowArr[1].split(" ")[0])
-                    if uKey not in uKeyRec:
-                        uKeyRec[uKey] = 1
-                        # for one common row
-                        if rowArr[1] == "":
-                            continue
-                        try:
-                            tmpTS = time.strftime("%Y-%m-%d",time.strptime(rowArr[1].split(" ")[0],"%m/%d/%Y"))
-                        except:
-                            print rowArr[1]
-                            print filePath
-                            exit()
-                        """
-                        uKey = ric + "-" + str(tmpTS)
-                        if uKey in insertRec:
-                            continue
-                        insertRec[uKey] = 1
-                        """
-                        valid = 1
-                        empty = 1
-                        sql = preSql + str(ric) + "','" + str(tmpTS) + "'"
-                        for i in range(3,30):
-                            try:
-                                val = round(float(rowArr[i]),6)
-                                # filter out invalid data
-                                # nan
-                                if math.isnan(val):
-                                    val = "NULL"
-                                # out of range
-                                elif abs(val) > maxVal:
-                                    outOfRangeLog.write(sql + "\n" + str(val) + "\n")
-                                    valid = 0
-                                    break
-                                    
-                                        
-                            except Exception as e:
-                                val = "NULL"  
-                                
-                            if val == "NULL":
-                                sql += ",NULL"
-                            else:
-                                sql += ",'" + str(val) + "'"
-                                empty = 0
-                                
-                        if valid:
-                            fqDict[rowArr[2]] = {}
-                            fqDict[rowArr[2]]["sql"] = sql
-                            fqDict[rowArr[2]]["empty"] = empty
-                    
-                    # for additional values, exists or nothing
-                    valid = 1
-                    try:
-                        val = round(float(rowArr[31]),6)
-                        # filter out invalid data
-                        # nan
-                        if math.isnan(val):
-                            valid = 0
-                        # out of range
-                        elif abs(val) > maxVal:
-                            outOfRangeLog.write(sql + "\n" + str(val) + "\n")
-                            valid = 0
-                    except Exception as e:
-                        valid = 0
-                    
-                    if valid:
-                        extrafqDict[rowArr[30]] = val
+                if rowArr[1] == "":
+                    continue
+                fq = rowArr[2]
+                try:
+                    ts = time.strftime("%Y-%m-%d",time.strptime(rowArr[1].split(" ")[0],"%m/%d/%Y"))
+                except:
+                    print filePath
+                    print rowArr[1]
+                # assume that the first ts is correct
+                if fq in fq2ts:
+                    continue
+                if ts in tsDict:
+                    continue
+                tsDict[ts] = 1
+                
+                fq2ts[fq] = ts
 
-            for fq in fqDict:
-                # if sql is empty and don't have extra column
-                if fqDict[fq]["empty"] and fq not in extrafqDict:
+            csvfile.seek(0)
+            cnt = 0
+            # build first 26 variable
+            for rowArr in spamreader:            
+                cnt += 1
+                # the first row
+                if cnt == 1:
+                    ric = rowArr[0]
                     continue
-                if fq not in extrafqDict:
-                    addVal = "NULL"
-                else:
-                    addVal = extrafqDict[fq]
-                sql = fqDict[fq]["sql"] + "," + str(addVal) + ")"
+                if rowArr[1] == "":
+                    continue                    
+                ts = time.strftime("%Y-%m-%d",time.strptime(rowArr[1].split(" ")[0],"%m/%d/%Y"))
+                sql = preSql
+                sql += str(ric) + "','" + str(ts) + "'"
+                valid = 0
+                for i in range(27):
+                    # no net income after tax
+                    if i == 3:
+                        continue
+                    val = cell2val(rowArr[i+3],outOfRangeLog)
+                    if val != "NULL":
+                        valid = 1
+                    sql += "," + str(val)
+                
+                sqlDict[ts] = {"sql":sql,"valid":valid,"has":0}
                     
+            csvfile.seek(0)
+            cnt = 0
+            # build the 27th variable
+            for rowArr in spamreader:
+                cnt += 1
+                # the first row
+                if cnt == 1:
+                    continue
+                fq = rowArr[30]
+                if fq not in fq2ts:
+                    continue
+                ts = fq2ts[fq]
+                if ts not in sqlDict:
+                    continue
+                val = cell2val(rowArr[31],outOfRangeLog)
+                if val == "NULL" and sqlDict[ts]["valid"] == 0:
+                    continue
+                sqlDict[ts]["sql"] += "," + str(val) + ")"
+                sqlDict[ts]["has"] = 1
+            
+            for ts in sqlDict:
+                if sqlDict[ts]["has"] == 1:
+                    sql = sqlDict[ts]["sql"]
+                else:
+                    if sqlDict[ts]["valid"] == 0:
+                        continue
+                    else:
+                        sql = sqlDict[ts]["sql"] + ",NULL)"
                 try:
                     cur.execute(sql)
                     conn.commit()
                 except Exception as e:
-                    errLog.write(str(e) + "\n" + sql + "\n")
-  
+                    errLog.write(sql + "\n" + str(e) + "\n")
+                    
         if totNum % 1000 == 0:
             print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", ric repeat:" + str(ricRepeat)
                 

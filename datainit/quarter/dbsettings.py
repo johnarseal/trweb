@@ -1,4 +1,5 @@
 # coding=utf-8
+import math
 
 # seetings for the database
 RAW_HOST = 'localhost'
@@ -8,8 +9,7 @@ DB_NAME = 'trweb'
 REC_TBNAME = 'tr_insert_record'
 TB_NAME = 'tr_report_quarter'
 
-rootDir = u"C:/project/Lixi/raw/Quarter"
-annualFolder = range(10)
+rootDir = u"D:/Quarter"
 colDict = {
     1:"tot_rev",
     2:"sga_exp_tot",
@@ -42,5 +42,21 @@ colDict = {
 }    
 numCol = len(colDict)
 
+def cell2val(cellVal,outOfRangeLog):
+    maxVal = 1e24
+    try:
+        val = round(float(cellVal),6)
+        # filter out invalid data
+        # nan
+        if math.isnan(val):
+            val = "NULL"
+            # out of range
+        elif abs(val) > maxVal:
+            outOfRangeLog.write("outofrange err\n" + str(val) + "\n")
+            val = "NULL"
+    except Exception as e:
+        val = "NULL"
+    
+    return val
 
     

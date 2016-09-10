@@ -18,7 +18,7 @@
 		}
 	}
 	
-	$normCol = Array("tot_rev","sga_exp_tot","cost_rev_tot","netinc_after_tax","tot_com_share_ostd",
+	$normCol = Array("tot_rev","sga_exp_tot","cost_rev_tot","netinc_before_extra","tot_com_share_ostd",
 				"revenue","acc_rec_trade","acc_pay","tot_invent","tot_asset_rep","tot_cur_asset",
 				"cash_shortterm_invest","accrued_exp","tot_longterm_debt","tot_debt","tot_equity",
 				"cap_lease","tot_cur_liability","cur_ratio","tot_property","cash_operating","cash_finance",
@@ -30,6 +30,7 @@
 		}
 	}
 	
+	//income statement
 	$inc_state = Array();
 	
 	$inc_state["Revenue Growth"] = calGrowth($colDict["tot_rev"],1);
@@ -102,28 +103,20 @@
 	$cash_flow["Cash Dividends Paid Growth(by last year)"] = calGrowthLY($colDict["cash_divid_paid"],1);
 	
 	
-	/* @TODO industry
-	$sql = "SELECT ric,industry,sub_industry,sector,country FROM tr_master_id WHERE ric='{$ric}'";
-	$result = mysqli_query($con,$sql);
-	$row = mysqli_fetch_assoc($result);
 	
-	$sub_industry = $row["sub_industry"];
-	$sql = "SELECT * FROM tr_industry_sum WHERE type_level = 'sub_industry' AND name = '{$sub_industry}'";
-	$result = mysqli_query($con,$sql);
-	if($result->num_rows == 0){
-		$sql = "SELECT ric FROM tr_master_id WHERE sub_industry = '{$sub_industry}'";
-		$result = mysqli_query($con,$sql);
-		$ricArr = Array();
-		while($row = mysqli_fetch_assoc($result)){
-			array_push($ricArr,$row["ric"]);
-		}
-		foreach($ricArr as $ric){
-			$sql = "SELECT * FROM {$RP_TABLE_AN} WHERE ric = '{$ric}'
-		}
-	}	
-	*/
+	$price_related = Array();
+	$cash_sum = calRela($colDict["cash_operating"],$colDict["cash_finance"],3,0);
+	$cash_sum = calRela($cash_sum,$colDict["cash_invest"],3,0);
+	//total share
+	$share_sum = calRela($colDict["tot_com_share_ostd"],$colDict["tot_pref_share_ostd"],3,0);
+	
+	$price_related["Historic PE"] = dirConvert($colDict["historic_pe"]);
+	$pe_netinc_before_extra = calRela($colDict["historic_pe"],$colDict["netinc_before_extra"],2,0);
+	$pe_netinc_before_extra_pershare = calRela($pe_netinc_before_extra,$share_sum,0,0);
+	$price_related["(PE*Net Income Before E.I)/Book Value Per Share"] = calRela($pe_netinc_before_extra_pershare,$colDict["bookval_pershare"],0,1);
+	$price_related["(PE*Net Income Before E.I)/Cash Flow Per Share"] = calRela($pe_netinc_before_extra,$cash_sum,0,1);
 	
 	
-	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow);
+	$retData = Array("Income Statement"=>$inc_state,"Balance Sheet"=>$bal_sh,"Cash Flow Statement"=>$cash_flow,"Price Related"=>$price_related);
 	echo json_encode($retData);
 	

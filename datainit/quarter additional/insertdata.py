@@ -38,7 +38,7 @@ for i in range(0,fullColNum):
     nullSql += "," + fullColDict[i]
 nullSql += ") VALUES('"
 
-newNum = 0
+sucNum = 0
 
 for folder in qFolder:
     curDir = os.path.join(rootDir,str(folder))
@@ -74,8 +74,9 @@ for folder in qFolder:
                     uKey = str(ric) + "-" + str(rowArr[3].split(" ")[0])
                     if uKey not in uKeyRec:
                         uKeyRec[uKey] = 1
-                        # for one common row
+                        # in case we have to insert a new, so store it first
                         valDict = {}
+                        # for one common row
                         if rowArr[3] == "":
                             continue
                         try:
@@ -89,29 +90,14 @@ for folder in qFolder:
                         valid = 0
                         sql = preSql
                         for i in range(0,3):
-                            try:
-                                val = round(float(rowArr[i+4]),6)
-                                # filter out invalid data
-                                # nan
-                                if math.isnan(val):
-                                    val = "NULL"
-                                # out of range
-                                elif abs(val) > maxVal:
-                                    outOfRangeLog.write(sql + "\n" + str(val) + "\n")
-                                    valid = 0
-                                    break
-                                    
-                                        
-                            except Exception as e:
-                                val = "NULL"  
-                                
-                            if val == "NULL":
-                                sql += colDict[i] + "=NULL,"
-                            else:
-                                sql += colDict[i] + "=" + str(val) + ","
+                            val = cell2val(rowArr[i+4],outOfRangeLog)
+                            if val != "NULL":
                                 valid = 1
+                            sql += colDict[i] + "=" + str(val) + ","
                             valDict[i] = val
-                            
+                        
+                        sql = sql[:-1]
+                        sql += " WHERE ric = '" + ric + "' AND ts = '" + tmpTS + "'"
                         if valid:
                             qSql = "SELECT ric FROM tr_report_quarter WHERE ric = '" + ric + "' AND ts = '" + tmpTS + "'"
                             num = cur.execute(qSql)
@@ -122,16 +108,17 @@ for folder in qFolder:
                                 for i in range(0,3):
                                     newSql += "," + str(valDict[i])
                                 newSql += ")"
-                                
-                                try:
-                                    cur.execute(newSql)
-                                    conn.commit()
-                                    newNum += 1
-                                except Exception as e:
-                                    errLog.write(str(e) + "\n" + newSql + "\n")
+                                sql = newSql
+                            
+                            try:
+                                cur.execute(sql)
+                                conn.commit()
+                                sucNum += 1
+                            except Exception as e:
+                                errLog.write(str(e) + "\n" + sql + "\n")
                             
         if totNum % 1000 == 0:
-            print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", newNum:" + str(newNum)
+            print "Time:" + str(time.clock()) + ", Finish handling " + str(totNum) + ", sucNum:" + str(sucNum)
 
         
         
